@@ -87,16 +87,7 @@ const OTPVerification = ({ email, onVerified, onBack, isRegistration = false }) 
   };
 
   return (
-    <motion.div
-      initial={{ x: '100%', opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      className={`backdrop-blur-md p-10 rounded-lg w-full max-w-md transition-colors ${
-        theme === 'hacker' 
-          ? 'hacker-form-panel font-mono' 
-          : 'bg-black/40 border border-cyber-blue/30 shadow-[0_0_50px_rgba(0,217,255,0.1)]'
-      }`}
-    >
+    <div className={`w-full transition-colors ${theme === 'hacker' ? 'font-mono' : ''}`}>
       <div className="mb-8">
         <h2 className={`text-3xl font-bold mb-2 ${
           theme === 'hacker' 
@@ -227,7 +218,7 @@ const OTPVerification = ({ email, onVerified, onBack, isRegistration = false }) 
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

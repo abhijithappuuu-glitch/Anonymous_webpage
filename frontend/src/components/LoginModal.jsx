@@ -20,7 +20,8 @@ const LoginModal = ({ open, onClose }) => {
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 140, damping: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl border border-cyber-blue/30 p-8 relative"
+            className="w-full max-w-md mx-4 bg-black/40 backdrop-blur-xl rounded-xl shadow-2xl border border-cyber-blue/30 p-8 relative overflow-hidden"
+            style={{ boxShadow: '0 0 50px rgba(0,217,255,0.1)' }}
           >
             <button
               onClick={onClose}

@@ -34,8 +34,19 @@ const AuthForm = ({ onSuccess }) => {
       }
     } catch (err) {
       console.error('Auth error:', err);
-      const unified = err.response?.data?.message || err.message || 'Authentication failed';
-      setError(unified);
+      let errorMessage = 'Authentication failed';
+      
+      if (err.code === 'NETWORK_ERROR' || err.message === 'Network Error') {
+        errorMessage = 'Network connection failed. Please check your internet connection and try again.';
+      } else if (err.response?.status === 404) {
+        errorMessage = 'Service temporarily unavailable. Please try again later.';
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -74,12 +85,7 @@ const AuthForm = ({ onSuccess }) => {
   }
 
   return (
-    <motion.div
-      initial={{ x: '100%', opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      className={`backdrop-blur-md p-10 rounded-lg w-full max-w-md transition-colors ${theme === 'hacker' ? 'hacker-form-panel font-mono' : 'bg-black/40 border border-cyber-blue/30 shadow-[0_0_50px_rgba(0,217,255,0.1)]'}`}
-    >
+    <div className={`w-full transition-colors ${theme === 'hacker' ? 'font-mono' : ''}`}>
       <div className="mb-8">
         <h2 className={`text-3xl font-bold mb-2 ${theme === 'hacker' ? 'text-hacker-green hacker-glow-green' : 'text-cyber-blue'}`} style={theme === 'hacker' ? undefined : { textShadow: '0 0 20px rgba(0,217,255,0.6)' }}>
           {isLogin ? (theme === 'hacker' ? '>> auth.login()' : '> ACCESS_TERMINAL') : (theme === 'hacker' ? '>> auth.register()' : '> NEW_USER_REGISTRATION')}
@@ -161,7 +167,7 @@ const AuthForm = ({ onSuccess }) => {
           </button>
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
