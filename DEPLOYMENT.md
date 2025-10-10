@@ -1,7 +1,7 @@
 # 🚀 Deployment Guide - Anonymous Cybersecurity Club Website
 
 ## Prerequisites
-1. Push your code to GitHub repository
+1. ✅ **Code pushed to GitHub**: https://github.com/abhijithappuuu-glitch/Anonymous_webpage
 2. Create accounts on the platforms (all free):
    - MongoDB Atlas: https://www.mongodb.com/atlas
    - Render: https://render.com
@@ -24,11 +24,13 @@
 5. Configure network access:
    - Go to Network Access → Add IP Address
    - Add `0.0.0.0/0` (allow from anywhere) - for simplicity
-6. Get connection string:
-   - Go to Databases → Connect → Connect your application
-   - Copy the connection string
-   - Replace `<password>` with your database user password
-   - Example: `mongodb+srv://admin:yourpassword@cluster0.abc123.mongodb.net/anonymous-club?retryWrites=true&w=majority`
+6. ✅ **Your Database is Ready!**
+   - Username: `anonymoussdmcet_db_user`
+   - Password: `0Bpf2PiwefdgHyV2`
+   - Get your connection string from Atlas dashboard:
+     - Go to Databases → Connect → Connect your application
+     - Copy the connection string and replace `<password>` with: `0Bpf2PiwefdgHyV2`
+     - Your connection string format: `mongodb+srv://anonymoussdmcet_db_user:0Bpf2PiwefdgHyV2@cluster0.xxxxx.mongodb.net/anonymous-club?retryWrites=true&w=majority`
 
 ## Step 2: Deploy Backend to Render
 

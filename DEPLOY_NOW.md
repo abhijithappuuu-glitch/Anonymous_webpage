@@ -14,14 +14,15 @@ Your Anonymous Cybersecurity Club website is ready to deploy! Follow these steps
 
 ### 🎯 Next Steps (Do These Now):
 
-1. **Push to GitHub** (if not already done):
-   ```bash
-   git add .
-   git commit -m "Prepare for deployment"
-   git push origin main
-   ```
+1. ✅ **Code Pushed to GitHub**:
+   **Repository**: https://github.com/abhijithappuuu-glitch/Anonymous_webpage
+   
+   Your code is ready for deployment!
 
-2. **Set up MongoDB Atlas** (5 minutes):
+2. ✅ **MongoDB Atlas** - Database ready!
+   - Username: `anonymoussdmcet_db_user`
+   - Password: `0Bpf2PiwefdgHyV2`
+   - Just need to get connection string from Atlas dashboard
    - Go to https://www.mongodb.com/atlas
    - Create free account → Create free cluster
    - Get connection string
