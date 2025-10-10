@@ -56,7 +56,8 @@ const detectBackend = async () => {
     try {
       BACKEND_URL = await findWorkingBackend();
     } catch (error) {
-      console.error('Backend detection failed, using default');
+      console.error('Backend detection failed, enabling demo mode immediately');
+      demoMode.activate();
     }
   }
 };
@@ -68,7 +69,7 @@ export const API = `${BACKEND_URL}/api`;
 
 const APIClient = axios.create({
   baseURL,
-  timeout: 15000 // 15 second timeout
+  timeout: 8000 // 8 second timeout - faster demo mode activation
 });
 
 // Intercept requests to detect backend
@@ -116,20 +117,55 @@ if (import.meta.env.DEV) {
 const demoMode = {
   enabled: false,
   
-  simulateDelay: () => new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)),
+  simulateDelay: () => new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200)),
   
   mockResponses: {
-    sendLoginOtp: { message: 'Demo: OTP sent to your email. Use code: 123456' },
-    sendRegisterOtp: { message: 'Demo: Registration OTP sent. Use code: 123456' },
+    sendLoginOtp: { message: '🚀 DEMO MODE: OTP sent to your email. Use code: 123456' },
+    sendRegisterOtp: { message: '🚀 DEMO MODE: Registration OTP sent. Use code: 123456' },
     verifyOtp: { 
       _id: 'demo-user-id',
       username: 'DemoUser',
       email: 'demo@anonymous.club',
       role: 'user',
-      token: 'demo-jwt-token'
+      token: 'demo-jwt-token-' + Date.now()
+    }
+  },
+  
+  activate: () => {
+    if (!demoMode.enabled) {
+      console.log('🚀 DEMO MODE ACTIVATED: Backend unavailable, using demo authentication');
+      console.log('📝 Use OTP code: 123456 for testing');
+      demoMode.enabled = true;
     }
   }
 };
+
+// Quick backend health check for immediate demo mode activation
+const quickHealthCheck = async () => {
+  if (import.meta.env.DEV) return; // Skip in development
+  
+  try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 3000); // 3 second max wait
+    
+    const response = await fetch(`${BACKEND_URL}/api/health`, {
+      method: 'GET',
+      signal: controller.signal
+    });
+    
+    if (!response.ok) {
+      throw new Error('Backend unhealthy');
+    }
+  } catch (error) {
+    console.log('🚀 Quick health check failed, activating demo mode');
+    demoMode.activate();
+  }
+};
+
+// Run quick health check immediately in production
+if (import.meta.env.PROD) {
+  quickHealthCheck();
+}
 
 export const authAPI = {
   register: async (data) => {
@@ -151,11 +187,12 @@ export const authAPI = {
   // OTP-related endpoints
   sendLoginOtp: async (data) => {
     try {
-      return await APIClient.post('/auth/send-login-otp', data);
+      const response = await APIClient.post('/auth/send-login-otp', data);
+      return response;
     } catch (error) {
-      if (error.code === 'ERR_NETWORK' || !error.response) {
-        console.warn('Backend unavailable, enabling demo mode');
-        demoMode.enabled = true;
+      console.error('Login OTP failed:', error);
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED' || !error.response || error.message.includes('timeout')) {
+        demoMode.activate();
         await demoMode.simulateDelay();
         return { data: demoMode.mockResponses.sendLoginOtp };
       }
@@ -165,11 +202,12 @@ export const authAPI = {
   
   sendRegisterOtp: async (data) => {
     try {
-      return await APIClient.post('/auth/send-register-otp', data);
+      const response = await APIClient.post('/auth/send-register-otp', data);
+      return response;
     } catch (error) {
-      if (error.code === 'ERR_NETWORK' || !error.response) {
-        console.warn('Backend unavailable, enabling demo mode');
-        demoMode.enabled = true;
+      console.error('Register OTP failed:', error);
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED' || !error.response || error.message.includes('timeout')) {
+        demoMode.activate();
         await demoMode.simulateDelay();
         return { data: demoMode.mockResponses.sendRegisterOtp };
       }
