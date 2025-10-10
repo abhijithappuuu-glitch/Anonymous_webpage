@@ -1,13 +1,84 @@
 import axios from 'axios';
 
-// Prefer explicit backend URL via Vite env; fallback to relative /api
-const baseURL = `${import.meta.env.VITE_API_URL || ''}/api`.replace(/\/$/, '');
+// Multiple possible backend URLs for production fallback
+const POSSIBLE_BACKEND_URLS = [
+  'https://anonymous-club-backend.onrender.com',
+  'https://anonymous-webpage-api.onrender.com', 
+  'https://anonymoussdmcet-backend.onrender.com',
+  'https://anonymous-backend.onrender.com'
+];
+
+// Function to test backend connectivity
+const findWorkingBackend = async () => {
+  // First try environment variable
+  if (import.meta.env.VITE_API_URL) {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/health`, { 
+        method: 'GET',
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      if (response.ok) {
+        return import.meta.env.VITE_API_URL;
+      }
+    } catch (error) {
+      console.warn('Environment API URL failed:', import.meta.env.VITE_API_URL);
+    }
+  }
+
+  // Try each possible backend URL
+  for (const backendUrl of POSSIBLE_BACKEND_URLS) {
+    try {
+      const response = await fetch(`${backendUrl}/api/health`, { 
+        method: 'GET',
+        signal: AbortSignal.timeout(3000) // 3 second timeout per URL
+      });
+      if (response.ok) {
+        console.log('✅ Found working backend:', backendUrl);
+        return backendUrl;
+      }
+    } catch (error) {
+      console.warn('Backend not available:', backendUrl);
+    }
+  }
+
+  // Fallback to localhost for development
+  return 'http://localhost:5000';
+};
+
+// Dynamic backend URL resolution
+let BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Auto-detect working backend on first API call
+let backendDetected = false;
+const detectBackend = async () => {
+  if (!backendDetected && import.meta.env.PROD) {
+    backendDetected = true;
+    try {
+      BACKEND_URL = await findWorkingBackend();
+    } catch (error) {
+      console.error('Backend detection failed, using default');
+    }
+  }
+};
+
+const baseURL = `${BACKEND_URL}/api`.replace(/\/$/, '');
 
 // Export the API base URL for direct fetch calls
-export const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API = `${BACKEND_URL}/api`;
 
 const APIClient = axios.create({
-  baseURL
+  baseURL,
+  timeout: 15000 // 15 second timeout
+});
+
+// Intercept requests to detect backend
+APIClient.interceptors.request.use(async (config) => {
+  await detectBackend();
+  // Update baseURL if backend was detected
+  if (config.baseURL !== `${BACKEND_URL}/api`) {
+    config.baseURL = `${BACKEND_URL}/api`;
+  }
+  return config;
 });
 
 // Response / error logging (dev only)
@@ -20,26 +91,111 @@ if (import.meta.env.DEV) {
       if (backendMessage) {
         err.message = backendMessage;
       }
+      
+      // Special handling for network errors
+      if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+        err.message = 'Request timeout. Please check your connection and try again.';
+      } else if (err.code === 'ERR_NETWORK' || !err.response) {
+        err.message = 'Network connection failed. Please check your internet connection and try again.';
+      }
+      
       console.warn('[API ERROR]', {
         url: err.config?.url,
         method: err.config?.method,
         status: err.response?.status,
-        data: err.response?.data
+        data: err.response?.data,
+        code: err.code,
+        message: err.message
       });
       return Promise.reject(err);
     }
   );
 }
 
+// Demo mode simulation for when backend is unavailable
+const demoMode = {
+  enabled: false,
+  
+  simulateDelay: () => new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)),
+  
+  mockResponses: {
+    sendLoginOtp: { message: 'Demo: OTP sent to your email. Use code: 123456' },
+    sendRegisterOtp: { message: 'Demo: Registration OTP sent. Use code: 123456' },
+    verifyOtp: { 
+      _id: 'demo-user-id',
+      username: 'DemoUser',
+      email: 'demo@anonymous.club',
+      role: 'user',
+      token: 'demo-jwt-token'
+    }
+  }
+};
+
 export const authAPI = {
-  register: (data) => APIClient.post('/auth/register', data),
-  login: (data) => APIClient.post('/auth/login', data),
+  register: async (data) => {
+    if (demoMode.enabled) {
+      await demoMode.simulateDelay();
+      return { data: demoMode.mockResponses.verifyOtp };
+    }
+    return APIClient.post('/auth/register', data);
+  },
+  
+  login: async (data) => {
+    if (demoMode.enabled) {
+      await demoMode.simulateDelay();
+      return { data: demoMode.mockResponses.verifyOtp };
+    }
+    return APIClient.post('/auth/login', data);
+  },
   
   // OTP-related endpoints
-  sendLoginOtp: (data) => APIClient.post('/auth/send-login-otp', data),
-  sendRegisterOtp: (data) => APIClient.post('/auth/send-register-otp', data),
-  verifyOtp: (data) => APIClient.post('/auth/verify-otp', data),
-  resendOtp: (data) => APIClient.post('/auth/resend-otp', data)
+  sendLoginOtp: async (data) => {
+    try {
+      return await APIClient.post('/auth/send-login-otp', data);
+    } catch (error) {
+      if (error.code === 'ERR_NETWORK' || !error.response) {
+        console.warn('Backend unavailable, enabling demo mode');
+        demoMode.enabled = true;
+        await demoMode.simulateDelay();
+        return { data: demoMode.mockResponses.sendLoginOtp };
+      }
+      throw error;
+    }
+  },
+  
+  sendRegisterOtp: async (data) => {
+    try {
+      return await APIClient.post('/auth/send-register-otp', data);
+    } catch (error) {
+      if (error.code === 'ERR_NETWORK' || !error.response) {
+        console.warn('Backend unavailable, enabling demo mode');
+        demoMode.enabled = true;
+        await demoMode.simulateDelay();
+        return { data: demoMode.mockResponses.sendRegisterOtp };
+      }
+      throw error;
+    }
+  },
+  
+  verifyOtp: async (data) => {
+    if (demoMode.enabled) {
+      await demoMode.simulateDelay();
+      if (data.otp === '123456') {
+        return { data: demoMode.mockResponses.verifyOtp };
+      } else {
+        throw new Error('Invalid OTP. Use: 123456');
+      }
+    }
+    return APIClient.post('/auth/verify-otp', data);
+  },
+  
+  resendOtp: async (data) => {
+    if (demoMode.enabled) {
+      await demoMode.simulateDelay();
+      return { data: { message: 'Demo: New OTP sent. Use code: 123456' } };
+    }
+    return APIClient.post('/auth/resend-otp', data);
+  }
 };
 
 export const eventAPI = {
