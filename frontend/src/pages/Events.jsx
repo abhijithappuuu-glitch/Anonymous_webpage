@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import EventModal from '../components/EventModal';
+import LoginModal from '../components/LoginModal';
 import { eventAPI } from '../utils/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -9,14 +10,144 @@ const Events = () => {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState({ category: '', status: '' });
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const { data } = await eventAPI.getAll(filter);
-        setEvents(data);
+        
+        // Use default events if database is empty
+        const defaultEvents = [
+          {
+            _id: 'default-event-1',
+            title: 'Web Security Workshop',
+            summary: 'Learn about SQL injection, XSS, and CSRF attacks with hands-on lab exercises.',
+            description: 'Comprehensive workshop covering OWASP Top 10 vulnerabilities with practical demonstrations and defensive techniques.',
+            date: '2024-11-15',
+            category: 'Workshop',
+            status: 'upcoming',
+            tags: ['web-security', 'owasp', 'hands-on']
+          },
+          {
+            _id: 'default-event-2',
+            title: 'National CTF Championship',
+            summary: 'Annual cybersecurity competition with crypto, forensics, and reverse engineering challenges.',
+            description: 'Multi-day capture the flag competition featuring advanced challenges in various cybersecurity domains.',
+            date: '2024-12-20',
+            category: 'Competition',
+            status: 'upcoming',
+            tags: ['ctf', 'competition', 'challenges']
+          },
+          {
+            _id: 'default-event-3',
+            title: 'Introduction to Ethical Hacking',
+            summary: 'Beginner-friendly session covering ethical hacking principles and penetration testing basics.',
+            description: 'Learn the fundamentals of ethical hacking, including reconnaissance, scanning, and vulnerability assessment.',
+            date: '2024-10-28',
+            category: 'Workshop',
+            status: 'past',
+            tags: ['ethical-hacking', 'pentest', 'beginner']
+          },
+          {
+            _id: 'default-event-4',
+            title: 'Digital Forensics Masterclass',
+            summary: 'Advanced techniques for incident response and digital evidence analysis.',
+            description: 'Comprehensive masterclass on digital forensics tools and methodologies for cybersecurity professionals.',
+            date: '2024-09-12',
+            category: 'Masterclass',
+            status: 'past',
+            tags: ['forensics', 'incident-response', 'advanced']
+          },
+          {
+            _id: 'default-event-5',
+            title: 'Cryptography Decoded',
+            summary: 'Understanding modern cryptographic algorithms and their real-world applications.',
+            description: 'Deep dive into symmetric and asymmetric encryption, hashing, and digital signatures.',
+            date: '2024-08-05',
+            category: 'Seminar',
+            status: 'past',
+            tags: ['cryptography', 'encryption', 'theory']
+          },
+          {
+            _id: 'default-event-6',
+            title: 'Red Team vs Blue Team Exercise',
+            summary: 'Simulated cyber attack and defense scenario with live demonstration.',
+            description: 'Interactive exercise where teams alternate between attacking and defending network infrastructure.',
+            date: '2024-12-08',
+            category: 'Exercise',
+            status: 'upcoming',
+            tags: ['red-team', 'blue-team', 'simulation']
+          }
+        ];
+        
+        setEvents(data.length > 0 ? data : defaultEvents);
       } catch (error) {
         console.error('Failed to fetch events:', error);
+        // Fallback to default events on API error
+        const defaultEvents = [
+          {
+            _id: 'default-event-1',
+            title: 'Web Security Workshop',
+            summary: 'Learn about SQL injection, XSS, and CSRF attacks with hands-on lab exercises.',
+            description: 'Comprehensive workshop covering OWASP Top 10 vulnerabilities with practical demonstrations and defensive techniques.',
+            date: '2024-11-15',
+            category: 'Workshop',
+            status: 'upcoming',
+            tags: ['web-security', 'owasp', 'hands-on']
+          },
+          {
+            _id: 'default-event-2',
+            title: 'National CTF Championship',
+            summary: 'Annual cybersecurity competition with crypto, forensics, and reverse engineering challenges.',
+            description: 'Multi-day capture the flag competition featuring advanced challenges in various cybersecurity domains.',
+            date: '2024-12-20',
+            category: 'Competition',
+            status: 'upcoming',
+            tags: ['ctf', 'competition', 'challenges']
+          },
+          {
+            _id: 'default-event-3',
+            title: 'Introduction to Ethical Hacking',
+            summary: 'Beginner-friendly session covering ethical hacking principles and penetration testing basics.',
+            description: 'Learn the fundamentals of ethical hacking, including reconnaissance, scanning, and vulnerability assessment.',
+            date: '2024-10-28',
+            category: 'Workshop',
+            status: 'past',
+            tags: ['ethical-hacking', 'pentest', 'beginner']
+          },
+          {
+            _id: 'default-event-4',
+            title: 'Digital Forensics Masterclass',
+            summary: 'Advanced techniques for incident response and digital evidence analysis.',
+            description: 'Comprehensive masterclass on digital forensics tools and methodologies for cybersecurity professionals.',
+            date: '2024-09-12',
+            category: 'Masterclass',
+            status: 'past',
+            tags: ['forensics', 'incident-response', 'advanced']
+          },
+          {
+            _id: 'default-event-5',
+            title: 'Cryptography Decoded',
+            summary: 'Understanding modern cryptographic algorithms and their real-world applications.',
+            description: 'Deep dive into symmetric and asymmetric encryption, hashing, and digital signatures.',
+            date: '2024-08-05',
+            category: 'Seminar',
+            status: 'past',
+            tags: ['cryptography', 'encryption', 'theory']
+          },
+          {
+            _id: 'default-event-6',
+            title: 'Red Team vs Blue Team Exercise',
+            summary: 'Simulated cyber attack and defense scenario with live demonstration.',
+            description: 'Interactive exercise where teams alternate between attacking and defending network infrastructure.',
+            date: '2024-12-08',
+            category: 'Exercise',
+            status: 'upcoming',
+            tags: ['red-team', 'blue-team', 'simulation']
+          }
+        ];
+        setEvents(defaultEvents);
       }
     };
     fetchEvents();
@@ -27,7 +158,7 @@ const Events = () => {
 
   return (
   <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${isHacker ? 'bg-hacker-bg' : 'bg-cyber-dark'}`}>
-      <Navbar />
+      <Navbar onLoginClick={() => setShowLogin(true)} />
 
       <div className="container mx-auto px-6 py-12 relative z-10">
         <h1 className={`text-5xl font-bold text-center mb-12 tracking-tight transition
@@ -114,6 +245,7 @@ const Events = () => {
       </div>
 
       <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
     </div>
   );
 };

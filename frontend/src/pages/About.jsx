@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import LoginModal from '../components/LoginModal';
 import { useTheme } from '../context/ThemeContext';
 import { API } from '../utils/api';
 
 const About = () => {
   const { theme } = useTheme();
+  const [showLogin, setShowLogin] = useState(false);
   const [clubInfo, setClubInfo] = useState({
     mission: "To advance cybersecurity through ethical hacking, defense research, and collaborative learning.",
     vision: "Building the next generation of cybersecurity professionals through hands-on experience and community.",
@@ -92,7 +94,7 @@ const About = () => {
 
   return (
     <div className={`min-h-screen relative overflow-hidden ${theme === 'hacker' ? 'bg-hacker-bg text-hacker-green' : 'bg-cyber-dark'}`}>
-      <Navbar />
+      <Navbar onLoginClick={() => setShowLogin(true)} />
       
       {/* Hero Section */}
       <motion.section
@@ -225,7 +227,10 @@ const About = () => {
               {theme === 'hacker' ? 'Initialize connection to our distributed learning mesh. Contribute to the collective knowledge base.' : 'Be part of a community dedicated to advancing cybersecurity through ethical research and collaborative learning.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className={`btn-cyber px-8 py-4 rounded-lg font-semibold ${theme === 'hacker' ? 'bg-hacker-panel/70 border border-hacker-green/40 text-hacker-green shadow-glow-hacker-green hover:bg-hacker-panel/90' : 'bg-gradient-to-r from-cyber-blue to-cyber-purple text-white hover:shadow-glow-accent'}`}>
+              <button 
+                onClick={() => setShowLogin(true)}
+                className={`btn-cyber px-8 py-4 rounded-lg font-semibold ${theme === 'hacker' ? 'bg-hacker-panel/70 border border-hacker-green/40 text-hacker-green shadow-glow-hacker-green hover:bg-hacker-panel/90' : 'bg-gradient-to-r from-cyber-blue to-cyber-purple text-white hover:shadow-glow-accent'}`}
+              >
                 {theme === 'hacker' ? 'apply()' : 'Apply Now'}
               </button>
               <button className={`btn-cyber px-8 py-4 rounded-lg font-semibold ${theme === 'hacker' ? 'bg-hacker-panel/70 border border-hacker-aqua/40 text-hacker-aqua hover:bg-hacker-panel/90' : 'bg-gradient-to-r from-cyber-green to-cyber-blue text-black hover:shadow-[0_0_25px_rgba(0,255,65,0.5)]'}`}>
@@ -235,6 +240,8 @@ const About = () => {
           </motion.div>
         </div>
       </section>
+
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
     </div>
   );
 };
