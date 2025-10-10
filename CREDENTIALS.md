@@ -2,7 +2,7 @@
 
 ## Admin Login
 - **Email**: `admin@anonymous.club`
-- **Password**: `admin123`
+- **Password**: `SecureAdmin2024!`
 - **Role**: Administrator (Full access to admin panel)
 
 ## Test User Login
@@ -20,7 +20,7 @@ To receive real OTP emails, configure these environment variables in Render dash
 ```env
 EMAIL_SERVICE=gmail
 EMAIL_USER=anonymous.sdmcet@gmail.com
-EMAIL_PASS=your-gmail-app-password
+EMAIL_PASS=mgha cjmu jbpl ezrr
 ```
 
 ### Gmail App Password Setup:

@@ -58,7 +58,7 @@ const seedDatabase = async () => {
     const admin = await User.create({
       username: 'admin',
       email: 'admin@anonymous.club',
-      password: 'admin123',
+      password: 'SecureAdmin2024!',
       role: 'admin'
     });
     console.log('👤 Created admin user');
@@ -78,7 +78,7 @@ const seedDatabase = async () => {
 
     console.log('\n✅ Database seeded successfully!');
     console.log('\n📝 Login credentials:');
-    console.log('Admin - Email: admin@anonymous.club, Password: admin123');
+    console.log('Admin - Email: admin@anonymous.club, Password: SecureAdmin2024!');
     console.log('User  - Email: hacker@anonymous.club, Password: hacker123');
 
     process.exit(0);
