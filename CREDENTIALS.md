@@ -1,7 +1,7 @@
 # 🔐 Anonymous Cybersecurity Club - Login Credentials
 
 ## Admin Login
-- **Email**: `admin@anonymous.club`
+- **Email**: `anonymous.sdmcet@gmail.com`
 - **Password**: `SecureAdmin2024!`
 - **Role**: Administrator (Full access to admin panel)
 
