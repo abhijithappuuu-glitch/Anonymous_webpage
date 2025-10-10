@@ -22,10 +22,16 @@ const AuthForm = ({ onSuccess }) => {
     
     try {
       if (isLogin) {
-        // For login, send OTP first
-        const response = await authAPI.sendLoginOtp({ email: formData.email });
-        setPendingUserData({ email: formData.email, password: formData.password });
-        setShowOtpVerification(true);
+        // For login, directly authenticate without OTP
+        const response = await authAPI.login({ 
+          email: formData.email, 
+          password: formData.password 
+        });
+        console.log('Login successful:', response.data);
+        login(response.data);
+        
+        // Close modal on success
+        if (onSuccess) onSuccess();
       } else {
         // For registration, send OTP first
         const response = await authAPI.sendRegisterOtp(formData);

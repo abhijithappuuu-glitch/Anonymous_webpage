@@ -136,7 +136,7 @@ Anonymous Cybersecurity Club Security Team
       `;
 
       const mailOptions = {
-        from: `"Anonymous Cybersecurity Club" <${process.env.EMAIL_USER}>`,
+        from: `"Anonymous Cybersecurity Club" <${process.env.EMAIL_USER || 'anonymous.sdmcet@gmail.com'}>`,
         to: email,
         subject: subject,
         text: textContent,

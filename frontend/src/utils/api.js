@@ -181,7 +181,18 @@ export const authAPI = {
       await demoMode.simulateDelay();
       return { data: demoMode.mockResponses.verifyOtp };
     }
-    return APIClient.post('/auth/login', data);
+    try {
+      const response = await APIClient.post('/auth/login', data);
+      return response;
+    } catch (error) {
+      console.error('Direct login failed:', error);
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED' || !error.response || error.message.includes('timeout')) {
+        demoMode.activate();
+        await demoMode.simulateDelay();
+        return { data: demoMode.mockResponses.verifyOtp };
+      }
+      throw error;
+    }
   },
   
   // OTP-related endpoints
