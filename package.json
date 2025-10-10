@@ -1,0 +1,32 @@
+{
+  "name": "anonymous-cybersecurity-club",
+  "version": "1.0.0",
+  "description": "Anonymous Cybersecurity Club Website",
+  "scripts": {
+    "dev": "start-dev.bat",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "cybersecurity",
+    "club",
+    "website",
+    "react",
+    "node"
+  ],
+  "author": "Anonymous Cybersecurity Club",
+  "license": "MIT",
+  "dependencies": {
+    "autoprefixer": "^10.4.21",
+    "multer": "^2.0.2",
+    "postcss": "^8.5.6",
+    "react-quill": "^2.0.0",
+    "tailwindcss": "^4.1.14"
+  }
+}
