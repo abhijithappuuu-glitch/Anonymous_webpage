@@ -83,7 +83,7 @@ Value: anonymous.sdmcet@gmail.com
 ### Variable 9 of 9 (EMAIL - REQUIRED FOR OTP!)
 ```
 Key: EMAIL_PASS
-Value: mgha cjmu jbpl ezrr
+Value: arnz avmv arfm lrgi
 ```
 
 ---

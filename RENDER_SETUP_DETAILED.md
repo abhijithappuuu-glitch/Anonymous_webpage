@@ -244,10 +244,10 @@ Key: EMAIL_USER
 Value: anonymous.sdmcet@gmail.com
 ```
 
-#### Variable 9:
+### Variable 9
 ```
 Key: EMAIL_PASS
-Value: mgha cjmu jbpl ezrr
+Value: arnz avmv arfm lrgi
 ```
 
 After adding all 9 variables, **scroll down** and click **"Save Changes"**.

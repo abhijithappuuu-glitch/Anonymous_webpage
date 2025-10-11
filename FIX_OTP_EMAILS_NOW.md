@@ -47,7 +47,7 @@ Key: EMAIL_USER
 Value: anonymous.sdmcet@gmail.com
 
 Key: EMAIL_PASS
-Value: mgha cjmu jbpl ezrr
+Value: arnz avmv arfm lrgi
 ```
 
 #### Step 5: Save
@@ -104,7 +104,7 @@ NODE_ENV=production
 FRONTEND_URL=https://anonymoussdmcet.vercel.app
 EMAIL_SERVICE=gmail
 EMAIL_USER=anonymous.sdmcet@gmail.com
-EMAIL_PASS=mgha cjmu jbpl ezrr
+EMAIL_PASS=arnz avmv arfm lrgi
 ```
 
 **Current Status on Render:** Only MongoDB and JWT are set (you can login)  
@@ -126,7 +126,7 @@ You can login because the admin user already exists in the database. But you can
 ## ⚠️ Important Notes
 
 ### Gmail App Password
-The value `mgha cjmu jbpl ezrr` is a **Gmail App Password**, not the regular Gmail password. This is already configured correctly, you just need to add it to Render.
+The value `arnz avmv arfm lrgi` is a **Gmail App Password**, not the regular Gmail password. This is already configured correctly, you just need to add it to Render.
 
 ### Email Delivery Time
 Once configured, OTP emails arrive within:
@@ -155,7 +155,7 @@ OTP emails will be sent from:
    - Go to Render → Environment
    - Confirm EMAIL_SERVICE = `gmail` (lowercase)
    - Confirm EMAIL_USER = `anonymous.sdmcet@gmail.com`
-   - Confirm EMAIL_PASS = `mgha cjmu jbpl ezrr` (exact)
+   - Confirm EMAIL_PASS = `arnz avmv arfm lrgi` (exact)
 
 3. **Wait for redeployment**:
    - Must say "Live" (green status)
@@ -230,3 +230,4 @@ You can test if email service is configured by checking Render logs for:
 ---
 
 **Once you add those 3 email variables, OTP emails will start working immediately!** 📧✨
+

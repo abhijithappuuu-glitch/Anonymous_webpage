@@ -78,7 +78,7 @@ anonymous.sdmcet@gmail.com
 **Key:** `EMAIL_PASS`
 **Value:**
 ```
-mgha cjmu jbpl ezrr
+arnz avmv arfm lrgi
 ```
 
 #### 6. NODE_ENV
@@ -253,3 +253,4 @@ Once you add the environment variables:
 ---
 
 **Need the quickest guide? Open `QUICKSTART_FIX.md` and follow those steps!** 🎯
+

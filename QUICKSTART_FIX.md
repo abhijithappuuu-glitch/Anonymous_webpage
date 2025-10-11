@@ -49,7 +49,7 @@ anonymous.sdmcet@gmail.com
 
 #### 5️⃣ EMAIL_PASS
 ```
-mgha cjmu jbpl ezrr
+arnz avmv arfm lrgi
 ```
 
 #### 6️⃣ NODE_ENV
@@ -135,3 +135,4 @@ If MongoDB still fails after adding variables:
 ---
 
 **Just add those 8 environment variables and everything will work! 🎉**
+
