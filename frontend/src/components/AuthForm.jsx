@@ -39,7 +39,12 @@ const AuthForm = ({ onSuccess }) => {
         setShowOtpVerification(true);
       }
     } catch (err) {
-      console.error('Auth error:', err);
+      console.error('Auth error details:', {
+        message: err.message,
+        code: err.code,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       let errorMessage = 'Authentication failed';
       
       // Check if demo mode is being used

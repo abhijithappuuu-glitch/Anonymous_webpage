@@ -256,7 +256,3 @@ html { scroll-behavior: smooth; }
 :root[data-theme='hacker'] ::-webkit-scrollbar-thumb { background:linear-gradient(#00ff41,#00e5ff); border-radius:8px; border:2px solid #050b0a; }
 :root[data-theme='hacker'] ::-webkit-scrollbar-thumb:hover { background:linear-gradient(#00e5ff,#00ff41); }
 
-EMAIL_SERVICE=gmail
-EMAIL_USER=anonymous.sdmcet@gmail.com
-EMAIL_PASS=your-gmail-app-password
-
