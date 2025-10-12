@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
-import ThreeLogo from './ThreeLogo';
+import { useEffect, Suspense, lazy } from 'react';
+const ThreeLogo = lazy(() => import('./ThreeLogo'));
 
 const Logo3D = () => (
   <motion.div
@@ -32,7 +32,9 @@ const AnimatedLogo = ({ onComplete, totalDurationMs = 3800 }) => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-  <Logo3D />
+  <Suspense fallback={<div className="w-24 h-24 rounded-full bg-black/30 border border-gray-700" />}> 
+    <Logo3D />
+  </Suspense>
       <motion.h1
         className="font-cyber text-4xl text-text mt-4 tracking-widest"
         initial={{ opacity: 0 }}

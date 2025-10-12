@@ -8,6 +8,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    {/* ErrorBoundary will also wrap Suspense fallbacks from lazy routes/components */}
     <ErrorBoundary>
       <AuthProvider>
         <ThemeProvider>
