@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import logo from '../assets/logo.png';
@@ -8,6 +8,9 @@ import { eventAPI, API } from '../utils/api';
 import CodeRain from '../components/CodeRain';
 import { useTheme } from '../context/ThemeContext';
 import LoginModal from '../components/LoginModal';
+
+// Lazy load 3D logo so three.js is loaded only when needed
+const ThreeLogo = lazy(() => import('../components/ThreeLogo'));
 
 const Home = () => {
   const [events, setEvents] = useState([]);
@@ -167,42 +170,50 @@ const Home = () => {
             className="text-center mb-24 max-w-5xl mx-auto"
           >
             <div className="relative text-center mb-6">
-              {/* Glowing logo positioned above text */}
-              <motion.img 
-                src={logo} 
-                alt="Club Logo" 
-                className={`mx-auto mb-8 w-48 h-48 md:w-64 md:h-64 object-contain opacity-60 ${
-                  theme === 'hacker' 
-                    ? 'drop-shadow-[0_0_100px_rgba(0,255,65,1)] filter brightness-200 saturate-150' 
-                    : 'drop-shadow-[0_0_100px_rgba(48,129,247,1)] filter brightness-200 saturate-150'
-                }`}
-                initial={{
-                  scale: 1,
-                  filter: theme === 'hacker' 
-                    ? 'drop-shadow(0 0 100px rgba(0,255,65,1)) drop-shadow(0 0 50px rgba(0,255,65,0.8)) brightness(200%) saturate(150%)' 
-                    : 'drop-shadow(0 0 100px rgba(48,129,247,1)) drop-shadow(0 0 50px rgba(48,129,247,0.8)) brightness(200%) saturate(150%)'
-                }}
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  filter: theme === 'hacker' 
-                    ? [
-                        'drop-shadow(0 0 100px rgba(0,255,65,1)) drop-shadow(0 0 50px rgba(0,255,65,0.8)) brightness(200%) saturate(150%)',
-                        'drop-shadow(0 0 120px rgba(0,255,65,1.2)) drop-shadow(0 0 60px rgba(0,255,65,1)) brightness(220%) saturate(170%)',
-                        'drop-shadow(0 0 100px rgba(0,255,65,1)) drop-shadow(0 0 50px rgba(0,255,65,0.8)) brightness(200%) saturate(150%)'
-                      ]
-                    : [
-                        'drop-shadow(0 0 100px rgba(48,129,247,1)) drop-shadow(0 0 50px rgba(48,129,247,0.8)) brightness(200%) saturate(150%)',
-                        'drop-shadow(0 0 120px rgba(48,129,247,1.2)) drop-shadow(0 0 60px rgba(48,129,247,1)) brightness(220%) saturate(170%)',
-                        'drop-shadow(0 0 100px rgba(48,129,247,1)) drop-shadow(0 0 50px rgba(48,129,247,0.8)) brightness(200%) saturate(150%)'
-                      ]
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity, 
-                  ease: "easeInOut",
-                  repeatType: "loop"
-                }}
-              />
+              {/* 3D Logo with pattern backdrop */}
+              <div className="relative mx-auto mb-8" style={{ width: '16rem', height: '16rem' }}>
+                {/* Pattern layer: subtle grid */}
+                <div
+                  className="absolute inset-0 rounded-full opacity-20"
+                  style={{
+                    backgroundImage: theme === 'hacker'
+                      ? 'linear-gradient(rgba(0,255,65,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.25) 1px, transparent 1px)'
+                      : 'linear-gradient(rgba(0,217,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(189,0,255,0.14) 1px, transparent 1px)',
+                    backgroundSize: '18px 18px',
+                    maskImage: 'radial-gradient(circle at center, black 60%, transparent 80%)'
+                  }}
+                />
+                {/* Glow ring */}
+                <div
+                  className="absolute -inset-6 rounded-full blur-2xl opacity-50"
+                  style={{
+                    background: theme === 'hacker'
+                      ? 'radial-gradient(circle at center, rgba(0,255,65,0.35), transparent 60%)'
+                      : 'radial-gradient(circle at center, rgba(0,217,255,0.25), transparent 60%)'
+                  }}
+                />
+                {/* 3D Canvas */}
+                <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  <Suspense
+                    fallback={
+                      <motion.img
+                        src={logo}
+                        alt="Club Logo"
+                        className={`w-full h-full object-contain opacity-70 ${
+                          theme === 'hacker'
+                            ? 'drop-shadow-[0_0_70px_rgba(0,255,65,0.9)]'
+                            : 'drop-shadow-[0_0_70px_rgba(48,129,247,0.9)]'
+                        }`}
+                        initial={{ opacity: 0.6, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6 }}
+                      />
+                    }
+                  >
+                    <ThreeLogo height={256} orbit />
+                  </Suspense>
+                </div>
+              </div>
               
               {/* Text below logo */}
               <h1 className={`text-5xl md:text-7xl font-extrabold tracking-tight mb-6 ${
