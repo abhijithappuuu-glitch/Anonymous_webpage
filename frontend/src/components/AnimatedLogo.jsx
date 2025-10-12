@@ -1,46 +1,16 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+import ThreeLogo from './ThreeLogo';
 
-const SvgIcon = () => (
-  <motion.svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    width="80"
-    height="80"
-    initial="hidden"
-    animate="visible"
+const Logo3D = () => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+    transition={{ duration: 0.8, ease: 'easeOut' }}
+    className="w-24 h-24"
   >
-    <motion.path
-      d="M20 80 L50 20 L80 80"
-      stroke="#3081F7"
-      strokeWidth="8"
-      fill="none"
-      strokeLinecap="round"
-      variants={{
-        hidden: { pathLength: 0, opacity: 0 },
-        visible: {
-          pathLength: 1,
-          opacity: 1,
-          transition: { duration: 1, ease: 'easeInOut' },
-        },
-      }}
-    />
-    <motion.path
-      d="M35 60 L65 60"
-      stroke="#4C9AFF"
-      strokeWidth="8"
-      fill="none"
-      strokeLinecap="round"
-      variants={{
-        hidden: { scaleX: 0, opacity: 0 },
-        visible: {
-          scaleX: 1,
-          opacity: 1,
-          transition: { delay: 0.8, duration: 0.5, ease: 'easeInOut' },
-        },
-      }}
-    />
-  </motion.svg>
+    <ThreeLogo height={96} orbit />
+  </motion.div>
 );
 
 const title = "ANONYMOUS";
@@ -62,7 +32,7 @@ const AnimatedLogo = ({ onComplete, totalDurationMs = 3800 }) => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      <SvgIcon />
+  <Logo3D />
       <motion.h1
         className="font-cyber text-4xl text-text mt-4 tracking-widest"
         initial={{ opacity: 0 }}
