@@ -29,5 +29,8 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",
     "vite": "^7.1.9"
+  },
+  "overrides": {
+    "three-mesh-bvh": "^0.8.0"
   }
 }
