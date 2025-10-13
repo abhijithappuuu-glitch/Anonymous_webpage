@@ -37,6 +37,7 @@ const otpSchema = new mongoose.Schema({
 
 // Index for faster queries
 otpSchema.index({ email: 1, type: 1 });
-otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
+// Note: TTL index is automatically created from the `expires` option on createdAt above.
+// Avoid adding another TTL on createdAt to prevent duplicate index warnings.
 
 export default mongoose.model('OTP', otpSchema);

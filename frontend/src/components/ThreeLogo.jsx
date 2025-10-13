@@ -1,5 +1,5 @@
-import { Suspense, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Suspense, useMemo, useEffect, useState, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import PropTypes from 'prop-types';
 
@@ -20,7 +20,26 @@ export default function ThreeLogo({
   src = '/models/Anonymous.glb',
   height = 48,
   orbit = false,
+  rotate = true,
+  reverse = true,
+  speed = 0.6, // radians per second (approx.)
+  reverseIntervalMs = 4000,
 }) {
+  const groupRef = useRef();
+  const [dir, setDir] = useState(1);
+
+  useEffect(() => {
+    if (!reverse) return;
+    const id = setInterval(() => setDir((d) => -d), reverseIntervalMs);
+    return () => clearInterval(id);
+  }, [reverse, reverseIntervalMs]);
+
+  useFrame((_, delta) => {
+    if (rotate && groupRef.current && !orbit) {
+      groupRef.current.rotation.y += dir * speed * delta;
+    }
+  });
+
   // Keep aspect by controlling container height; width auto
   return (
     <div style={{ height, width: height, aspectRatio: '1 / 1' }} className="inline-block overflow-visible">
@@ -29,9 +48,11 @@ export default function ThreeLogo({
         <ambientLight intensity={0.7} />
         <directionalLight position={[3, 3, 3]} intensity={1.2} />
         <Suspense fallback={null}>
-          <Model url={src} scale={1.1} />
+          <group ref={groupRef}>
+            <Model url={src} scale={1.1} />
+          </group>
           <Environment preset="city" />
-          {orbit && <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.2} />}
+          {orbit && <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={dir * 1.2} />}
         </Suspense>
       </Canvas>
     </div>
@@ -42,6 +63,10 @@ ThreeLogo.propTypes = {
   src: PropTypes.string,
   height: PropTypes.number,
   orbit: PropTypes.bool,
+  rotate: PropTypes.bool,
+  reverse: PropTypes.bool,
+  speed: PropTypes.number,
+  reverseIntervalMs: PropTypes.number,
 };
 
 // Drei GLTF loader needs this for static bundlers

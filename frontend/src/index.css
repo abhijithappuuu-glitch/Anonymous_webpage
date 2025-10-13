@@ -1,10 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Orbitron:wght@700&display=swap');
 
-/* stylelint-disable at-rule-no-unknown */
+/* Tailwind core layers (required before using @layer) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* stylelint-enable at-rule-no-unknown */
 
 /* Custom layers & utilities below */
 
