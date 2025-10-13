@@ -171,7 +171,7 @@ const Home = () => {
           >
             <div className="relative text-center mb-6">
               {/* Minimal 3D logo (no partition/backdrop) */}
-              <div className="relative mx-auto mb-6" style={{ width: '9rem', height: '9rem' }}>
+              <div className="relative mx-auto mb-6" style={{ width: 'clamp(9rem, 25vw, 16rem)', height: 'clamp(9rem, 25vw, 16rem)' }}>
                 <Suspense
                   fallback={
                     <motion.img
@@ -184,7 +184,16 @@ const Home = () => {
                     />
                   }
                 >
-                  <ThreeLogo height={144} orbit={false} rotate reverse speed={0.7} />
+                  <ThreeLogo
+                    height={'clamp(9rem, 25vw, 16rem)'}
+                    orbit={false}
+                    rotate
+                    reverse={false}
+                    speed={1.2}
+                    direction={1}
+                    modelScale={0.5}
+                    cameraZ={3.6}
+                  />
                 </Suspense>
               </div>
 

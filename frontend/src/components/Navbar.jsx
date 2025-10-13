@@ -28,7 +28,7 @@ const Navbar = ({ onLoginClick }) => {
             {/* 3D logo (lazy) with a simple fallback to avoid blocking main bundle */}
             <div className="w-10 h-10">
               <Suspense fallback={<img src={logo} alt="logo" className="w-10 h-10 object-contain" />}> 
-                <ThreeLogo height={40} orbit={false} />
+                <ThreeLogo height={40} orbit={false} reverse={false} speed={1.2} direction={1} />
               </Suspense>
             </div>
             <span className={`text-xl font-bold tracking-wider ${theme === 'hacker' ? 'text-red-400 drop-shadow-[0_0_6px_rgba(255,0,64,0.6)]' : 'text-purple-400 drop-shadow-[0_0_6px_rgba(147,51,234,0.6)]'}`}>ANONYMOUS</span>

@@ -9,7 +9,7 @@ const Logo3D = () => (
     transition={{ duration: 0.8, ease: 'easeOut' }}
     className="w-24 h-24"
   >
-    <ThreeLogo height={96} orbit />
+  <ThreeLogo height={96} orbit speed={1.2} direction={1} reverse={false} />
   </motion.div>
 );
 
