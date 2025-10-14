@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+// Cross-browser timeout helper (avoids AbortSignal.timeout which may be unsupported)
+const timeoutSignal = (ms) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, cancel: () => clearTimeout(id) };
+};
+
 // Multiple possible backend URLs for production fallback
 const POSSIBLE_BACKEND_URLS = [
   'https://anonymous-club-backend-f2ai.onrender.com',
@@ -14,10 +21,12 @@ const findWorkingBackend = async () => {
   // First try environment variable
   if (import.meta.env.VITE_API_URL) {
     try {
+      const t = timeoutSignal(5000);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/health`, { 
         method: 'GET',
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: t.signal
       });
+      t.cancel();
       if (response.ok) {
         return import.meta.env.VITE_API_URL;
       }
@@ -29,10 +38,12 @@ const findWorkingBackend = async () => {
   // Try each possible backend URL
   for (const backendUrl of POSSIBLE_BACKEND_URLS) {
     try {
+      const t = timeoutSignal(3000);
       const response = await fetch(`${backendUrl}/api/health`, { 
         method: 'GET',
-        signal: AbortSignal.timeout(3000) // 3 second timeout per URL
+        signal: t.signal
       });
+      t.cancel();
       if (response.ok) {
         console.log('✅ Found working backend:', backendUrl);
         return backendUrl;
@@ -141,32 +152,7 @@ const demoMode = {
   }
 };
 
-// Quick backend health check for immediate demo mode activation
-const quickHealthCheck = async () => {
-  if (import.meta.env.DEV) return; // Skip in development
-  
-  try {
-    const controller = new AbortController();
-    setTimeout(() => controller.abort(), 3000); // 3 second max wait
-    
-    const response = await fetch(`${BACKEND_URL}/api/health`, {
-      method: 'GET',
-      signal: controller.signal
-    });
-    
-    if (!response.ok) {
-      throw new Error('Backend unhealthy');
-    }
-  } catch (error) {
-    console.log('🚀 Quick health check failed, activating demo mode');
-    demoMode.activate();
-  }
-};
-
-// Run quick health check immediately in production
-if (import.meta.env.PROD) {
-  quickHealthCheck();
-}
+// Note: demo mode will activate during API calls if backend is unreachable
 
 export const authAPI = {
   register: async (data) => {
