@@ -5,6 +5,13 @@
   "installCommand": "npm install",
   "devCommand": "npm run dev",
   "rewrites": [
-    { "source": "/((?!.*\\..*).*)", "destination": "/" }
+    {
+      "source": "/:path*",
+      "destination": "/index.html",
+      "missing": [
+        { "type": "file" },
+        { "type": "directory" }
+      ]
+    }
   ]
 }
