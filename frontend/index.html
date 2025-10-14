@@ -8,10 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <title>Anonymous Cybersecurity Club</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script>
+      // Cache-busting deployment indicator
+      console.log('Build version: v2-fixed-chunks');
       // Error overlay for production debugging
       window.addEventListener('error', function(e) {
-        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#ff4d6d;font-family:monospace;padding:2rem;overflow:auto;z-index:9999"><h2>Error Loading App</h2><pre>' + (e.error?.stack || e.message) + '</pre><p>Check console for more details.</p></div>';
+        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:#ff4d6d;font-family:monospace;padding:2rem;overflow:auto;z-index:9999"><h2>Error Loading App</h2><pre>' + (e.error?.stack || e.message) + '</pre><p>Check console for more details.</p><p style="margin-top:1rem;color:#888">Build: v2-fixed-chunks</p></div>';
         console.error('Runtime error:', e);
       });
       window.addEventListener('unhandledrejection', function(e) {
