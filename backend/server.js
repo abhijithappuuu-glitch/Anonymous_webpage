@@ -62,10 +62,29 @@ app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', publicRoutes);
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+// MongoDB connection with options
+const mongoOptions = {
+  serverSelectionTimeoutMS: 30000, // 30 seconds
+  socketTimeoutMS: 45000, // 45 seconds
+  family: 4 // Use IPv4, skip trying IPv6
+};
+
+mongoose.connect(process.env.MONGODB_URI, mongoOptions)
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('Connection string:', process.env.MONGODB_URI?.replace(/:[^:]*@/, ':****@')); // Hide password
+    process.exit(1); // Exit if DB connection fails
+  });
+
+// Handle MongoDB connection events
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️ MongoDB disconnected. Attempting to reconnect...');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB error:', err);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
