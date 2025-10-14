@@ -7,9 +7,12 @@ const timeoutSignal = (ms) => {
   return { signal: controller.signal, cancel: () => clearTimeout(id) };
 };
 
+// Primary backend URL
+const PRIMARY_BACKEND_URL = 'https://anonymous-club-backend-f2ai.onrender.com';
+
 // Multiple possible backend URLs for production fallback
 const POSSIBLE_BACKEND_URLS = [
-  'https://anonymous-club-backend-f2ai.onrender.com',
+  PRIMARY_BACKEND_URL,
   'https://anonymous-club-backend.onrender.com',
   'https://anonymous-webpage-api.onrender.com', 
   'https://anonymoussdmcet-backend.onrender.com',
@@ -57,8 +60,8 @@ const findWorkingBackend = async () => {
   return 'http://localhost:5000';
 };
 
-// Dynamic backend URL resolution
-let BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Dynamic backend URL resolution - prioritize env var, then primary backend, then localhost
+let BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PRIMARY_BACKEND_URL : 'http://localhost:5000');
 
 // Auto-detect working backend on first API call
 let backendDetected = false;
