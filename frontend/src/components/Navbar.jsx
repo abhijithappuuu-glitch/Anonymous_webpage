@@ -1,10 +1,9 @@
-import { useContext, useState, Suspense, lazy } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import logo from '../assets/logo.png';
-const ThreeLogo = lazy(() => import('./ThreeLogo'));
 
 const Navbar = ({ onLoginClick }) => {
   const { user, logout } = useContext(AuthContext);
@@ -25,12 +24,8 @@ const Navbar = ({ onLoginClick }) => {
         <div className="flex justify-between items-center">
           {/* Left: Logo Only */}
           <Link to="/" className="flex items-center gap-3">
-            {/* 3D logo (lazy) with a simple fallback to avoid blocking main bundle */}
-            <div className="w-10 h-10">
-              <Suspense fallback={<img src={logo} alt="logo" className="w-10 h-10 object-contain" />}> 
-                <ThreeLogo height={40} orbit={false} reverse={false} speed={1.2} direction={1} />
-              </Suspense>
-            </div>
+            {/* Regular 2D logo */}
+            <img src={logo} alt="Anonymous Logo" className="w-10 h-10 object-contain" />
             <span className={`text-xl font-bold tracking-wider ${theme === 'hacker' ? 'text-red-400 drop-shadow-[0_0_6px_rgba(255,0,64,0.6)]' : 'text-purple-400 drop-shadow-[0_0_6px_rgba(147,51,234,0.6)]'}`}>ANONYMOUS</span>
           </Link>
           {/* Right: User Info, Logout, Arrow, Theme Toggle, Menu */}
