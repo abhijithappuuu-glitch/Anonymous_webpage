@@ -179,6 +179,31 @@ html { scroll-behavior: smooth; }
 	.parallax-layer { transform: none !important; }
 }
 
+/* Mobile optimizations - Disable heavy effects on small screens */
+@media (max-width: 768px) {
+  .float-layer, .float-layer-alt { animation: none !important; }
+  .parallax-layer { transform: none !important; }
+  .smooth-scale, .smooth-glow { animation: none !important; }
+  .glass-enhanced { backdrop-filter: blur(10px) !important; }
+  
+  /* Improve mobile text readability */
+  :root[data-theme='hacker'] {
+    font-size: 16px;
+  }
+  
+  /* Reduce glow effects on mobile for better readability */
+  .hacker-glow-green { 
+    text-shadow: 0 0 4px rgba(0,255,65,0.8), 0 0 10px rgba(57,255,20,0.4); 
+  }
+  
+  .hacker-outline { 
+    box-shadow: 0 0 0 1px rgba(0,255,65,0.8), 0 0 10px -1px rgba(0,255,65,0.5); 
+  }
+  
+  /* Optimize scrollbar for mobile */
+  ::-webkit-scrollbar { width: 6px; }
+}
+
 /* Hacker theme root variables */
 :root[data-theme='hacker'] {
 	--bg: #000000;
@@ -194,34 +219,40 @@ html { scroll-behavior: smooth; }
 	color-scheme: dark;
 }
 
-/* Scanline & subtle CRT feel */
-:root[data-theme='hacker'] body:before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	background: repeating-linear-gradient(
-		to bottom,
-		rgba(0,255,65,0.04) 0px,
-		rgba(0,255,65,0.04) 1px,
-		transparent 2px,
-		transparent 3px
-	);
-	mix-blend-mode: overlay;
-	opacity: .25;
-	z-index: 5;
+/* Scanline & subtle CRT feel - Optimized for performance */
+@media (min-width: 768px) {
+  :root[data-theme='hacker'] body:before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,255,65,0.03) 0px,
+      rgba(0,255,65,0.03) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    mix-blend-mode: overlay;
+    opacity: .15;
+    z-index: 5;
+    will-change: opacity;
+  }
 }
 
-/* Grid overlay for hacker mode */
-:root[data-theme='hacker'] body:after {
-	content: "";
-	position: fixed;
-	inset:0;
-	pointer-events:none;
-	background-image: linear-gradient(var(--grid, #0f1f1c) 1px, transparent 1px), linear-gradient(90deg, var(--grid, #0f1f1c) 1px, transparent 1px);
-	background-size: 48px 48px;
-	opacity: .08;
-	z-index: 4;
+/* Grid overlay for hacker mode - Desktop only for performance */
+@media (min-width: 768px) {
+  :root[data-theme='hacker'] body:after {
+    content: "";
+    position: fixed;
+    inset:0;
+    pointer-events:none;
+    background-image: linear-gradient(var(--grid, #0f1f1c) 1px, transparent 1px), linear-gradient(90deg, var(--grid, #0f1f1c) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: .06;
+    z-index: 4;
+    will-change: opacity;
+  }
 }
 
 /* Hacker glow utilities */

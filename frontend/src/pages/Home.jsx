@@ -109,13 +109,14 @@ const Home = () => {
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${theme === 'hacker' ? 'bg-black text-green-400' : 'bg-cyber-dark'}`}>
-        {theme === 'hacker' && <CodeRain active />}
-        <div className="text-center">
-          <div className={`animate-spin w-8 h-8 border-4 border-t-transparent rounded-full mx-auto mb-4 ${
+        {/* Only show CodeRain on desktop for performance */}
+        {theme === 'hacker' && window.innerWidth > 768 && <CodeRain active />}
+        <div className="text-center px-4">
+          <div className={`animate-spin w-12 h-12 border-4 border-t-transparent rounded-full mx-auto mb-4 ${
             theme === 'hacker' ? 'border-green-400' : 'border-cyber-blue'
           }`}></div>
-          <p className={theme === 'hacker' ? 'text-green-400 font-mono' : 'text-cyber-blue'}>
-            {theme === 'hacker' ? '> LOADING.data()...' : 'Loading...'}
+          <p className={`text-sm md:text-base ${theme === 'hacker' ? 'text-green-400 font-mono' : 'text-cyber-blue'}`}>
+            {theme === 'hacker' ? '> LOADING_SYSTEM...' : 'Loading...'}
           </p>
         </div>
       </div>
@@ -124,10 +125,11 @@ const Home = () => {
 
   return (
     <div className={`min-h-screen relative overflow-hidden ${theme === 'hacker' ? 'bg-black text-green-400' : 'bg-cyber-dark'}`}>
-      {theme === 'hacker' && <CodeRain active />}
+      {/* Only show CodeRain on desktop for performance */}
+      {theme === 'hacker' && window.innerWidth > 768 && <CodeRain active />}
       
-      {/* Parallax decorative layers - only show in normal theme */}
-      {theme !== 'hacker' && (
+      {/* Parallax decorative layers - only show on desktop in normal theme */}
+      {theme !== 'hacker' && window.innerWidth > 768 && (
         <div className="parallax-scene pointer-events-none absolute inset-0">
           <div className="parallax-layer" data-depth="0.2">
             <div className="w-full h-full opacity-[0.07]" style={{backgroundImage:'radial-gradient(circle at 30% 40%, #00d9ff 0, transparent 60%)'}}></div>
@@ -143,125 +145,156 @@ const Home = () => {
 
       <Navbar onLoginClick={() => setShowLogin(true)} />
 
-      {/* Hero Section */}
+      {/* Hero Section - Optimized padding for mobile */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative py-28 px-6 md:px-10 overflow-hidden"
+        className="relative py-12 md:py-28 px-4 md:px-10 overflow-hidden"
       >
-        {/* Grid overlay - different for hacker theme */}
+        {/* Grid overlay - different for hacker theme, hidden on mobile */}
         {theme === 'hacker' ? (
-          <div className="absolute inset-0 opacity-20" style={{
+          <div className="hidden md:block absolute inset-0 opacity-20" style={{
             backgroundImage: 'linear-gradient(rgba(0,255,65,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.3) 1px, transparent 1px)',
             backgroundSize: '30px 30px'
           }}></div>
         ) : (
-          <div className="absolute inset-0 opacity-10 mix-blend-screen" style={{
+          <div className="hidden md:block absolute inset-0 opacity-10 mix-blend-screen" style={{
             backgroundImage:'linear-gradient(rgba(0,217,255,0.09) 1px, transparent 1px),linear-gradient(90deg, rgba(0,217,255,0.09) 1px, transparent 1px)',
             backgroundSize:'46px 46px'
           }}></div>
         )}
         
-        <div className={`container mx-auto relative z-10 ${theme === 'hacker' ? 'font-mono' : ''}`}> 
+        <div className={`container mx-auto relative z-10 px-2 ${theme === 'hacker' ? 'font-mono' : ''}`}> 
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
+            initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-center mb-24 max-w-5xl mx-auto"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="text-center mb-12 md:mb-24 max-w-5xl mx-auto"
           >
-            <div className="relative text-center mb-6">
-              {/* Minimal 3D logo (no partition/backdrop) */}
-              <div className="relative mx-auto mb-6" style={{ width: 'clamp(9rem, 25vw, 16rem)', height: 'clamp(9rem, 25vw, 16rem)' }}>
+            <div className="relative text-center mb-4 md:mb-6">
+              {/* Minimal 3D logo - smaller on mobile for faster load */}
+              <div className="relative mx-auto mb-4 md:mb-6" style={{ width: 'clamp(7rem, 22vw, 16rem)', height: 'clamp(7rem, 22vw, 16rem)' }}>
                 <Suspense
                   fallback={
                     <motion.img
                       src={logo}
                       alt="Club Logo"
-                      className="w-full h-full object-contain opacity-80"
-                      initial={{ opacity: 0.6, scale: 0.95 }}
+                      className="w-full h-full object-contain opacity-90"
+                      initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4 }}
+                      transition={{ duration: 0.3 }}
                     />
                   }
                 >
-                  <ThreeLogo
-                    height={'clamp(9rem, 25vw, 16rem)'}
-                    orbit={false}
-                    rotate
-                    reverse={false}
-                    speed={1.2}
-                    direction={1}
-                    modelScale={0.5}
-                    cameraZ={3.6}
-                  />
+                  {/* Only load 3D logo on larger screens for performance */}
+                  {window.innerWidth > 640 ? (
+                    <ThreeLogo
+                      height={'clamp(7rem, 22vw, 16rem)'}
+                      orbit={false}
+                      rotate
+                      reverse={false}
+                      speed={1.2}
+                      direction={1}
+                      modelScale={0.5}
+                      cameraZ={3.6}
+                    />
+                  ) : (
+                    <motion.img
+                      src={logo}
+                      alt="Club Logo"
+                      className="w-full h-full object-contain"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    />
+                  )}
                 </Suspense>
               </div>
 
-              {/* Text below logo */}
-              <h1 className={`text-5xl md:text-7xl font-extrabold tracking-tight mb-6 ${
+              {/* Text below logo - responsive sizing */}
+              <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-4 md:mb-6 px-2 ${
                 theme === 'hacker' 
-                  ? 'text-green-400 font-mono drop-shadow-[0_0_20px_rgba(0,255,65,0.8)]' 
-                  : 'bg-clip-text text-transparent bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-green drop-shadow-[0_0_15px_rgba(48,129,247,0.6)]'
+                  ? 'text-green-400 font-mono drop-shadow-[0_0_15px_rgba(0,255,65,0.7)]' 
+                  : 'bg-clip-text text-transparent bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-green drop-shadow-[0_0_12px_rgba(48,129,247,0.5)]'
               }`}>
-                {theme === 'hacker' ? '> ANONYMOUS_COLLECTIVE.SYS' : 'Anonymous'}
+                {theme === 'hacker' ? (
+                  <span className="break-words">
+                    <span className="hidden sm:inline">&gt; ANONYMOUS_COLLECTIVE.SYS</span>
+                    <span className="sm:hidden">&gt; ANON_SYS</span>
+                  </span>
+                ) : 'Anonymous'}
               </h1>
             </div>
             
-            <p className={`text-lg md:text-xl font-mono mb-10 ${theme === 'hacker' ? 'text-green-400' : 'text-text-secondary'}`}>
+            <p className={`text-sm sm:text-base md:text-lg font-mono mb-6 md:mb-10 px-2 ${theme === 'hacker' ? 'text-green-400' : 'text-text-secondary'}`}>
               <span className="terminal-caret">
-                {theme === 'hacker' ? '$ ./initialize_secure_protocol.sh' : 'initiating secure knowledge exchange'}
+                {theme === 'hacker' ? (
+                  <span className="break-words">
+                    <span className="hidden sm:inline">$ ./initialize_secure_protocol.sh</span>
+                    <span className="sm:hidden">$ ./init_protocol.sh</span>
+                  </span>
+                ) : 'initiating secure knowledge exchange'}
               </span>
             </p>
             
-            <div className={`max-w-3xl mx-auto leading-relaxed text-base md:text-lg mb-10 ${
-              theme === 'hacker' ? 'text-green-300 font-mono bg-black/50 p-6 border border-green-400' : 'text-text'
+            <div className={`max-w-3xl mx-auto leading-relaxed text-sm sm:text-base md:text-lg mb-8 md:mb-10 px-2 ${
+              theme === 'hacker' ? 'text-green-300 font-mono bg-black/50 p-3 sm:p-4 md:p-6 border border-green-400' : 'text-text'
             }`}>
               {theme === 'hacker' ? (
-                <pre className="text-left">
-{`// SYSTEM STATUS: ONLINE
-// DISTRIBUTED COGNITION MESH: ACTIVE
-// ETHICAL INTRUSION PROTOCOLS: LOADED
-// DEFENSE MATRIX: OPERATIONAL
-// COLLECTIVE KNOWLEDGE BASE: SYNCED`}
+                <pre className="text-left text-xs sm:text-sm md:text-base overflow-x-auto whitespace-pre-wrap break-words">
+{`// STATUS: ONLINE
+// MESH: ACTIVE
+// PROTOCOLS: LOADED
+// MATRIX: OPERATIONAL
+// KNOWLEDGE: SYNCED`}
                 </pre>
               ) : (
                 'We are a collective of ethical hackers, defenders, and builders advancing security through open collaboration, hands‑on labs, CTF challenges, and responsible research.'
               )}
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
               <motion.a 
                 href="#events" 
-                className={`btn-cyber px-8 py-4 font-semibold tracking-wide relative overflow-hidden transition-all duration-500 ${
+                className={`btn-cyber px-6 sm:px-8 py-3 md:py-4 text-sm sm:text-base font-semibold tracking-wide relative overflow-hidden transition-all duration-300 ${
                   theme === 'hacker' 
-                    ? 'bg-black border-2 border-green-400 text-green-400 font-mono hover:bg-green-400 hover:text-black hover:shadow-[0_0_30px_rgba(0,255,65,1)]' 
+                    ? 'bg-black border-2 border-green-400 text-green-400 font-mono hover:bg-green-400 hover:text-black active:scale-95' 
                     : 'bg-gradient-to-r from-cyber-blue to-cyber-purple text-white shadow-glow-accent hover:shadow-glow-accent-hover rounded-lg'
                 }`}
                 whileHover={{ 
-                  scale: 1.05, 
-                  y: -3,
+                  scale: window.innerWidth > 768 ? 1.05 : 1.02, 
+                  y: window.innerWidth > 768 ? -3 : -1,
                   transition: { type: "spring", stiffness: 400, damping: 17 }
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {theme === 'hacker' ? '> ./scan_events.sh' : 'Explore Events'}
+                {theme === 'hacker' ? (
+                  <span className="break-words">
+                    <span className="hidden sm:inline">&gt; ./scan_events.sh</span>
+                    <span className="sm:hidden">&gt; EVENTS</span>
+                  </span>
+                ) : 'Explore Events'}
               </motion.a>
               <motion.button
                 type="button"
-                className={`btn-cyber px-8 py-4 font-semibold tracking-wide relative overflow-hidden transition-all duration-500 ${
+                className={`btn-cyber px-6 sm:px-8 py-3 md:py-4 text-sm sm:text-base font-semibold tracking-wide relative overflow-hidden transition-all duration-300 ${
                   theme === 'hacker' 
-                    ? 'bg-black border-2 border-red-400 text-red-400 font-mono hover:bg-red-400 hover:text-black hover:shadow-[0_0_30px_rgba(255,0,64,1)]' 
-                    : 'bg-gradient-to-r from-cyber-green to-cyber-blue text-black hover:shadow-[0_0_35px_rgba(0,255,65,0.7)] rounded-lg'
+                    ? 'bg-black border-2 border-red-400 text-red-400 font-mono hover:bg-red-400 hover:text-black active:scale-95' 
+                    : 'bg-gradient-to-r from-cyber-green to-cyber-blue text-black hover:shadow-[0_0_25px_rgba(0,255,65,0.6)] rounded-lg'
                 }`}
                 onClick={() => setShowLogin(true)}
                 whileHover={{ 
-                  scale: 1.05, 
-                  y: -3,
+                  scale: window.innerWidth > 768 ? 1.05 : 1.02, 
+                  y: window.innerWidth > 768 ? -3 : -1,
                   transition: { type: "spring", stiffness: 400, damping: 17 }
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {theme === 'hacker' ? '> ./join_network.sh' : 'Join The Network'}
+                {theme === 'hacker' ? (
+                  <span className="break-words">
+                    <span className="hidden sm:inline">&gt; ./join_network.sh</span>
+                    <span className="sm:hidden">&gt; JOIN</span>
+                  </span>
+                ) : 'Join The Network'}
               </motion.button>
             </div>
           </motion.div>

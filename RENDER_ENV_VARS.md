@@ -13,14 +13,14 @@ value: production
 ### 2. MONGODB_URI
 ```
 NAME_OF_VARIABLE: MONGODB_URI
-value: mongodb+srv://anonymoussdmcet_db_user:0Bpf2PiwefdgHyV2@cluster0.xxxxx.mongodb.net/anonymous-club?retryWrites=true&w=majority
+value: mongodb+srv://anonymoussdmcet_db_user:BVK292@appu@cluster0.89wxvqa.mongodb.net/anonymous-club?retryWrites=true&w=majority&appName=Cluster0
 ```
-**⚠️ IMPORTANT**: Replace `cluster0.xxxxx.mongodb.net` with your actual cluster URL from MongoDB Atlas dashboard.
+**✅ CORRECT**: This is your exact MongoDB Atlas connection string with username `anonymoussdmcet_db_user` and password `BVK292@appu`
 
 ### 3. JWT_SECRET
 ```
 NAME_OF_VARIABLE: JWT_SECRET
-value: anonymous_cyber_club_super_secret_key_2024_change_in_production
+value: anonymous_cyber_club_super_secret_key_2024_production_secure_token
 ```
 
 ### 4. JWT_EXPIRE
@@ -44,15 +44,16 @@ value: anonymous.sdmcet@gmail.com
 ### 7. EMAIL_PASS
 ```
 NAME_OF_VARIABLE: EMAIL_PASS
-value: mgha cjmu jbpl ezrr
+value: arnz avmv arfm lrgi
 ```
+**Note**: This is your Gmail App Password for sending OTP emails
 
-### 8. FRONTEND_URL (Add this after Vercel deployment)
+### 8. FRONTEND_URL
 ```
 NAME_OF_VARIABLE: FRONTEND_URL
-value: https://your-vercel-app.vercel.app
+value: https://anonymoussdmcet.vercel.app
 ```
-**Note**: You'll update this with your actual Vercel URL after frontend deployment.
+**✅ CORRECT**: This is your deployed Vercel frontend URL
 
 ## How to Add Each Variable:
 

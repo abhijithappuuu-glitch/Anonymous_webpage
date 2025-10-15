@@ -6,12 +6,23 @@ const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
 const About = lazy(() => import('./pages/About'));
 const ProtectedAdmin = lazy(() => import('./components/ProtectedAdmin'));
-// Landing no longer required for gating; could be removed or repurposed
+
+// Optimized loading spinner component
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="text-center">
+      <div className="animate-spin w-12 h-12 border-4 border-green-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p className="text-green-400 font-mono text-sm animate-pulse">
+        &gt; LOADING_SYSTEM...
+      </p>
+    </div>
+  </div>
+);
 
 function App() {
   return (
     <HashRouter>
-      <Suspense fallback={<div className="p-8 text-center text-sm opacity-70">Loading…</div>}>
+      <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
