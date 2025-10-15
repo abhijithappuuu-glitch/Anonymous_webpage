@@ -172,41 +172,30 @@ const Home = () => {
             className="text-center mb-12 md:mb-24 max-w-5xl mx-auto"
           >
             <div className="relative text-center mb-4 md:mb-6">
-              {/* Minimal 3D logo - smaller on mobile for faster load */}
-              <div className="relative mx-auto mb-4 md:mb-6" style={{ width: 'clamp(7rem, 22vw, 16rem)', height: 'clamp(7rem, 22vw, 16rem)' }}>
+              {/* 3D logo - same on all devices, just responsive sizing */}
+              <div className="relative mx-auto mb-4 md:mb-6" style={{ width: 'clamp(8rem, 25vw, 16rem)', height: 'clamp(8rem, 25vw, 16rem)' }}>
                 <Suspense
                   fallback={
                     <motion.img
                       src={logo}
                       alt="Club Logo"
-                      className="w-full h-full object-contain opacity-90"
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      className="w-full h-full object-contain opacity-80"
+                      initial={{ opacity: 0.6, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.4 }}
                     />
                   }
                 >
-                  {/* Only load 3D logo on larger screens for performance */}
-                  {window.innerWidth > 640 ? (
-                    <ThreeLogo
-                      height={'clamp(7rem, 22vw, 16rem)'}
-                      orbit={false}
-                      rotate
-                      reverse={false}
-                      speed={1.2}
-                      direction={1}
-                      modelScale={0.5}
-                      cameraZ={3.6}
-                    />
-                  ) : (
-                    <motion.img
-                      src={logo}
-                      alt="Club Logo"
-                      className="w-full h-full object-contain"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    />
-                  )}
+                  <ThreeLogo
+                    height={'clamp(8rem, 25vw, 16rem)'}
+                    orbit={false}
+                    rotate
+                    reverse={false}
+                    speed={1.2}
+                    direction={1}
+                    modelScale={0.5}
+                    cameraZ={3.6}
+                  />
                 </Suspense>
               </div>
 
