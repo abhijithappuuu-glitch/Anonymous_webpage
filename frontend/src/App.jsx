@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
+import Jarvis from './components/Jarvis';
 
 // Route-based code splitting
 const Home = lazy(() => import('./pages/Home'));
@@ -32,6 +33,9 @@ function App() {
           <Route path="/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+        
+        {/* Jarvis AI Assistant - Available on all pages */}
+        <Jarvis />
       </Suspense>
     </HashRouter>
   );
