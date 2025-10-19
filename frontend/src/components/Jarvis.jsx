@@ -240,10 +240,16 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
         { headers: { 'Content-Type': 'application/json' } }
       );
       
-      const aiText = response.data.candidates[0].content.parts[0].text;
-      return aiText.trim();
+      if (response.data && response.data.candidates && response.data.candidates[0]) {
+        const aiText = response.data.candidates[0].content.parts[0].text;
+        console.log('✅ AI Response:', aiText);
+        return aiText.trim();
+      } else {
+        console.error('❌ Invalid API response structure:', response.data);
+        throw new Error('Invalid API response');
+      }
     } catch (error) {
-      console.error('AI Error:', error);
+      console.error('❌ AI Error Details:', error.response?.data || error.message);
       return generateResponse(userMessage);
     }
   };
@@ -378,15 +384,15 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
     setIsTyping(true);
 
     try {
-      // Try AI first
+      // Try AI first - ALWAYS use AI for natural conversation
       const aiResponse = await generateAIResponse(userInput);
       
       // Add navigation if relevant
       let action = null;
       const msg = userInput.toLowerCase();
-      if (msg.includes('event')) action = { type: 'navigate', path: '/events', label: 'View Events' };
-      else if (msg.includes('team') || msg.includes('about')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
-      else if (msg.includes('home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
+      if (msg.includes('event') && !msg.includes('what') && !msg.includes('explain')) action = { type: 'navigate', path: '/events', label: 'View Events' };
+      else if ((msg.includes('team') || msg.includes('about')) && !msg.includes('what') && !msg.includes('tell')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
+      else if (msg.includes('go home') || msg.includes('take me home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
       else if (msg.includes('dashboard') && user?.role === 'admin') action = { type: 'navigate', path: '/dashboard', label: 'Open Dashboard' };
 
       const botMessage = {
@@ -399,7 +405,8 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
       setMessages(prev => [...prev, botMessage]);
       setIsTyping(false);
     } catch (error) {
-      // Fallback
+      console.error('AI Error - falling back to local:', error);
+      // Fallback only if AI completely fails
       const response = generateResponse(userInput);
       const botMessage = {
         type: 'bot',
