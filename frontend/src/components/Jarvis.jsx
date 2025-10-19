@@ -155,23 +155,76 @@ const Jarvis = () => {
   // AI-Powered Response with Google Gemini
   const generateAIResponse = async (userMessage) => {
     try {
+      const systemPrompt = `You are NOBODY, an elite AI assistant for the Anonymous Cybersecurity Club at SDMCET.
+
+CLUB INFORMATION:
+- Founded: 2024
+- Founders: Abhijith (Penetration Testing Expert), Bhuvanendra G Bhagwat (Dark Web Security)
+- Team: Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
+- Achievements: 50+ CTF wins, Top 10 National Ranking, 25+ CVEs, 150+ members
+- Specialties: Penetration Testing, Web Security, CTF, Cryptography, IoT Security
+
+YOUR EXPERTISE:
+- Penetration Testing & Red Team Operations
+- Web Application Security (OWASP Top 10)
+- Network Security & Defense
+- Cryptography & Encryption
+- CTF Competitions & Capture The Flag
+- Ethical Hacking & Bug Bounty Hunting
+- Malware Analysis & Reverse Engineering
+- Digital Forensics & Incident Response
+- Social Engineering Awareness
+- IoT & Embedded Systems Security
+- Dark Web Security Research
+
+RESPONSE GUIDELINES:
+1. Be professional, concise, and helpful
+2. Keep answers under 100 words
+3. Focus ONLY on cybersecurity and our club
+4. Use bullet points for lists
+5. Provide actionable advice
+6. Encourage learning and participation
+7. If asked about non-cyber topics, redirect to club activities
+8. Mention relevant events/workshops when appropriate
+9. Use appropriate technical terminology
+10. Be encouraging about skill development
+
+IMPORTANT: Only answer questions related to:
+- Cybersecurity concepts and techniques
+- Our club activities, events, and team
+- Learning resources and getting started
+- Website navigation and features
+- CTF competitions and practice
+- Ethical hacking and security research
+
+If asked about unrelated topics, politely say: "I specialize in cybersecurity and our club activities. Ask me about penetration testing, CTF competitions, our events, or how to get started in cybersecurity!"`;
+
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs`,
         {
           contents: [{
             parts: [{
-              text: `You are NOBODY, an elite AI assistant for the Anonymous Cybersecurity Club. Provide a concise, helpful response (max 80 words) about: ${userMessage}`
+              text: `${systemPrompt}\n\nUser Question: ${userMessage}\n\nProvide a helpful, concise response (max 100 words):`
             }]
           }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 150,
-            topP: 0.95
-          }
+            maxOutputTokens: 200,
+            topP: 0.9,
+            topK: 40
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_ONLY_HIGH"
+            }
+          ]
         },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      return response.data.candidates[0].content.parts[0].text;
+      
+      const aiText = response.data.candidates[0].content.parts[0].text;
+      return aiText.trim();
     } catch (error) {
       console.error('AI Error:', error);
       return generateResponse(userMessage);
@@ -252,7 +305,7 @@ const Jarvis = () => {
     // Events
     if (msg.includes('event') || msg.includes('workshop') || msg.includes('hackathon') || msg.includes('ctf')) {
       return {
-        text: 'We host various cybersecurity events including workshops, hackathons, webinars, and CTF competitions. You can browse all upcoming and past events on our Events page.',
+        text: '🎯 We host various cybersecurity events:\n\n• Weekly security workshops\n• Monthly CTF competitions\n• Annual hackathons\n• Expert webinars\n• Bug bounty programs\n\nCheck the Events page to see what\'s coming up!',
         action: { type: 'navigate', path: '/events', label: 'View Events' }
       };
     }
@@ -260,13 +313,36 @@ const Jarvis = () => {
     // Team
     if (msg.includes('team') || msg.includes('member') || msg.includes('founder') || msg.includes('who')) {
       return {
-        text: 'Our club is led by talented founders and core team members specializing in various areas of cybersecurity. You can meet the team, read their bios, and learn about their expertise on our About page.',
+        text: '👥 Our talented team:\n\n• Abhijith - Technical Lead (Penetration Testing)\n• Bhuvanendra G Bhagwat - VP Operations (Dark Web Security)\n• Core Team: Satvik, Tejaswini, Ramya, Chaithanaya, Deepak\n\nMeet them and learn about their expertise!',
         action: { type: 'navigate', path: '/about', label: 'Meet the Team' }
       };
     }
 
+    // Cybersecurity concepts
+    if (msg.includes('what is') || msg.includes('explain') || msg.includes('tell me about')) {
+      if (msg.includes('ctf') || msg.includes('capture the flag')) {
+        return '🚩 CTF (Capture The Flag) is a cybersecurity competition where participants solve challenges to find hidden "flags".\n\n📚 Types:\n• Jeopardy-style (various categories)\n• Attack-Defense (real-time battles)\n• Mixed format\n\nWe host monthly CTF events - perfect for learning!';
+      }
+      if (msg.includes('penetration') || msg.includes('pentesting') || msg.includes('pen test')) {
+        return '🔓 Penetration Testing is ethical hacking to find security vulnerabilities before malicious actors do.\n\n🎯 Phases:\n1. Reconnaissance\n2. Scanning\n3. Exploitation\n4. Post-exploitation\n5. Reporting\n\nJoin our workshops to learn hands-on!';
+      }
+      if (msg.includes('owasp')) {
+        return '🛡️ OWASP Top 10 are the most critical web security risks:\n\n1. Broken Access Control\n2. Cryptographic Failures\n3. Injection\n4. Insecure Design\n5. Security Misconfiguration\n...and more!\n\nWe cover these in our web security workshops!';
+      }
+    }
+
+    // How to join/start
+    if (msg.includes('how to join') || msg.includes('get started') || msg.includes('beginner')) {
+      return '🚀 Welcome! Here\'s how to get started:\n\n1. Click menu → LOGIN to create an account\n2. Join our Discord community\n3. Attend beginner workshops\n4. Practice on platforms like:\n   • TryHackMe\n   • HackTheBox\n   • PentesterLab\n5. Participate in our CTF events\n\nWe welcome all skill levels!';
+    }
+
+    // Contact/reach
+    if (msg.includes('contact') || msg.includes('email') || msg.includes('reach') || msg.includes('discord')) {
+      return '📧 Get in touch with us:\n\n• Email: anonymous.sdmcet@gmail.com\n• Discord: Join link on About page\n• Campus: SDMCET\n\nWe\'re always happy to help aspiring security professionals!';
+    }
+
     // Default: didn't understand
-    return `I'm NOBODY, your cybersecurity assistant! I can help you navigate the website, find events, learn about the team, or answer cybersecurity questions. What would you like to know?`;
+    return `I'm NOBODY, your cybersecurity assistant! 🤖\n\nI can help you with:\n\n• Cybersecurity concepts & techniques\n• Our club events and activities\n• Team information\n• Getting started in cyber security\n• Website navigation\n\nWhat would you like to know?`;
   };
 
   // Handle sending message
