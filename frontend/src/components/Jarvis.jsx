@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { AuthContext } from '../context/AuthContext';
 import { API } from '../utils/api';
+import axios from 'axios';
 
 const Jarvis = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -133,8 +134,8 @@ const Jarvis = () => {
     if (isOpen && messages.length === 0) {
       const currentPage = websiteKnowledge.pages[location.pathname];
       const greeting = currentPage 
-        ? `Hello! I'm Jarvis, your personal assistant. I see you're on the ${currentPage.name} page. How can I help you explore our cybersecurity club today?`
-        : `Hello! I'm Jarvis, your personal assistant for the Anonymous Cybersecurity Club. How may I assist you today?`;
+        ? `Hello! I'm NOBODY, your personal assistant. I see you're on the ${currentPage.name} page. How can I help you explore our cybersecurity club today?`
+        : `Hello! I'm NOBODY, your personal assistant for the Anonymous Cybersecurity Club. How may I assist you today?`;
       
       setMessages([{
         type: 'bot',
@@ -150,6 +151,32 @@ const Jarvis = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // AI-Powered Response with Google Gemini
+  const generateAIResponse = async (userMessage) => {
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs`,
+        {
+          contents: [{
+            parts: [{
+              text: `You are NOBODY, an elite AI assistant for the Anonymous Cybersecurity Club. Provide a concise, helpful response (max 80 words) about: ${userMessage}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 150,
+            topP: 0.95
+          }
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      return response.data.candidates[0].content.parts[0].text;
+    } catch (error) {
+      console.error('AI Error:', error);
+      return generateResponse(userMessage);
+    }
+  };
 
   // Intelligent response system
   const generateResponse = (userMessage) => {
@@ -239,11 +266,11 @@ const Jarvis = () => {
     }
 
     // Default: didn't understand
-    return `I'm here to help you navigate the Anonymous Cybersecurity Club website. I can:\n\n• Guide you to different pages\n• Answer questions about the club\n• Help you find events and team information\n• Assist with website features\n\nWhat would you like to know?`;
+    return `I'm NOBODY, your cybersecurity assistant! I can help you navigate the website, find events, learn about the team, or answer cybersecurity questions. What would you like to know?`;
   };
 
   // Handle sending message
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
 
     const userMessage = {
@@ -253,12 +280,34 @@ const Jarvis = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const userInput = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate thinking delay
-    setTimeout(() => {
-      const response = generateResponse(inputValue);
+    try {
+      // Try AI first
+      const aiResponse = await generateAIResponse(userInput);
+      
+      // Add navigation if relevant
+      let action = null;
+      const msg = userInput.toLowerCase();
+      if (msg.includes('event')) action = { type: 'navigate', path: '/events', label: 'View Events' };
+      else if (msg.includes('team') || msg.includes('about')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
+      else if (msg.includes('home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
+      else if (msg.includes('dashboard') && user?.role === 'admin') action = { type: 'navigate', path: '/dashboard', label: 'Open Dashboard' };
+
+      const botMessage = {
+        type: 'bot',
+        text: aiResponse,
+        action,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+      setIsTyping(false);
+    } catch (error) {
+      // Fallback
+      const response = generateResponse(userInput);
       const botMessage = {
         type: 'bot',
         text: typeof response === 'string' ? response : response.text,
@@ -268,7 +317,7 @@ const Jarvis = () => {
 
       setMessages(prev => [...prev, botMessage]);
       setIsTyping(false);
-    }, 800);
+    }
   };
 
   // Handle action button click
@@ -329,7 +378,7 @@ const Jarvis = () => {
                       : 'bg-black/90 border-cyber-blue/40 text-cyber-blue'
                   }`}
                 >
-                  <span className="font-mono font-bold">Jarvis</span>
+                  <span className="font-mono font-bold">NOBODY</span>
                   <span className="text-xs opacity-70 ml-2">Your AI Assistant</span>
                 </motion.div>
               )}
@@ -368,9 +417,9 @@ const Jarvis = () => {
                 </div>
                 <div>
                   <h3 className={`font-bold ${theme === 'hacker' ? 'text-hacker-green' : 'text-cyber-blue'}`}>
-                    Jarvis
+                    NOBODY AI
                   </h3>
-                  <p className="text-xs text-text-secondary">AI Website Assistant</p>
+                  <p className="text-xs text-text-secondary">Cybersecurity Expert</p>
                 </div>
               </div>
               <button
