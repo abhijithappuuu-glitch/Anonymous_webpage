@@ -189,15 +189,26 @@ const Navbar = ({ onLoginClick }) => {
                         </div>
                         
                         {user.role === 'admin' && (
-                          <Link 
-                            to="/admin" 
-                            onClick={() => setMenuOpen(false)}
-                            className="group flex items-center px-4 py-3 mb-2 rounded-lg text-sm font-mono transition-all duration-200 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 border border-transparent hover:border-yellow-400/20"
-                          >
-                            <span className="mr-3 transition-transform group-hover:scale-110">⚡</span>
-                            <span className="flex-1">ADMIN PANEL</span>
-                            <span className="text-xs opacity-60">→</span>
-                          </Link>
+                          <>
+                            <Link 
+                              to="/admin" 
+                              onClick={() => setMenuOpen(false)}
+                              className="group flex items-center px-4 py-3 mb-2 rounded-lg text-sm font-mono transition-all duration-200 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 border border-transparent hover:border-yellow-400/20"
+                            >
+                              <span className="mr-3 transition-transform group-hover:scale-110">⚡</span>
+                              <span className="flex-1">ADMIN PANEL</span>
+                              <span className="text-xs opacity-60">→</span>
+                            </Link>
+                            <Link 
+                              to="/dashboard" 
+                              onClick={() => setMenuOpen(false)}
+                              className="group flex items-center px-4 py-3 mb-2 rounded-lg text-sm font-mono transition-all duration-200 text-purple-400 hover:text-purple-300 hover:bg-purple-900/20 border border-transparent hover:border-purple-400/20"
+                            >
+                              <span className="mr-3 transition-transform group-hover:scale-110">🎛️</span>
+                              <span className="flex-1">DASHBOARD</span>
+                              <span className="text-xs opacity-60">→</span>
+                            </Link>
+                          </>
                         )}
                         
                         <motion.button

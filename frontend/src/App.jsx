@@ -5,6 +5,7 @@ import React, { Suspense, lazy } from 'react';
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
 const About = lazy(() => import('./pages/About'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProtectedAdmin = lazy(() => import('./components/ProtectedAdmin'));
 
 // Optimized loading spinner component
@@ -28,6 +29,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<ProtectedAdmin />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>
