@@ -98,38 +98,36 @@ User: ${userInput}
 Your response (be conversational and friendly):`;
 
             try {
-                const apiUrl = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
-                const apiKey = 'AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs';
+                // NOTE: Replace with your API key for testing
+                const apiKey = prompt('Enter your OpenAI API key (or press OK to skip):');
                 
-                const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+                if (!apiKey) {
+                    resultDiv.innerHTML += '<div class="error">❌ API key required for testing</div>';
+                    return;
+                }
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: prompt }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.9,
-                            maxOutputTokens: 250,
-                            topP: 0.95,
-                            topK: 40
-                        },
-                        safetySettings: [
-                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_ONLY_HIGH" },
-                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
-                        ]
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            { role: 'system', content: prompt },
+                            { role: 'user', content: userInput }
+                        ],
+                        temperature: 0.9,
+                        max_tokens: 200
                     })
                 });
 
                 resultDiv.innerHTML += '<div class="log">📡 Response Status: ' + response.status + '</div>';
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`API Error ${response.status}: ${errorText}`);
+                    const errorData = await response.json();
+                    throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
                 }
 
                 const data = await response.json();
@@ -137,8 +135,8 @@ Your response (be conversational and friendly):`;
                 
                 resultDiv.innerHTML += '<div class="log">📦 Response Structure: ' + JSON.stringify(data, null, 2).substring(0, 200) + '...</div>';
 
-                if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                    const aiText = data.candidates[0].content.parts[0].text.trim();
+                if (data?.choices?.[0]?.message?.content) {
+                    const aiText = data.choices[0].message.content.trim();
                     resultDiv.innerHTML += '<div class="response">✅ AI Response:\n\n' + aiText + '</div>';
                 } else {
                     resultDiv.innerHTML += '<div class="error">⚠️ Unexpected response structure</div>';

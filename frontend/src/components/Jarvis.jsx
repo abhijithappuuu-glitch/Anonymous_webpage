@@ -152,7 +152,7 @@ const Jarvis = () => {
     }
   }, [isOpen]);
 
-  // AI-Powered Response with Google Gemini - REWRITTEN FOR RELIABILITY
+  // AI-Powered Response with ChatGPT (OpenAI)
   const generateAIResponse = async (userMessage) => {
     try {
       // Short, focused prompt for better AI responses
@@ -179,51 +179,48 @@ User: ${userMessage}
 
 Your response (be conversational and friendly):`;
 
-      // Make the API call with better error handling
-      const apiUrl = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
-      const apiKey = 'AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs';
+      // Make the API call with ChatGPT (OpenAI)
+      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
       
-      console.log('🤖 NOBODY: Calling Gemini API...');
+      if (!apiKey) {
+        console.error('❌ OpenAI API key not configured');
+        return generateResponse(userMessage);
+      }
       
-      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+      console.log('🤖 NOBODY: Calling ChatGPT API...');
+      
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }],
-          generationConfig: {
-            temperature: 0.9,
-            maxOutputTokens: 250,
-            topP: 0.95,
-            topK: 40
-          },
-          safetySettings: [
-            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_ONLY_HIGH" },
-            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
-          ]
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: prompt },
+            { role: 'user', content: userMessage }
+          ],
+          temperature: 0.9,
+          max_tokens: 200
         })
       });
 
-      console.log('� API Response Status:', response.status);
+      console.log('📡 API Response Status:', response.status);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API Error Response:', errorText);
-        throw new Error(`API returned ${response.status}: ${errorText}`);
+        const errorData = await response.json();
+        console.error('❌ API Error:', errorData);
+        throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
       console.log('📦 API Response Data:', data);
 
-      // Extract AI response
-      if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        const aiText = data.candidates[0].content.parts[0].text.trim();
-        console.log('✅ AI Response Extracted:', aiText.substring(0, 100) + '...');
+      // Extract ChatGPT response
+      if (data?.choices?.[0]?.message?.content) {
+        const aiText = data.choices[0].message.content.trim();
+        console.log('✅ AI Response:', aiText);
         return aiText;
       }
 
