@@ -180,7 +180,7 @@ User: ${userMessage}
 Your response (be conversational and friendly):`;
 
       // Make the API call with better error handling
-      const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+      const apiUrl = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
       const apiKey = 'AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs';
       
       console.log('🤖 NOBODY: Calling Gemini API...');
