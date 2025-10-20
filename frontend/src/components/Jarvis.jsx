@@ -133,17 +133,9 @@ const Jarvis = () => {
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       const currentPage = websiteKnowledge.pages[location.pathname];
-      const greetings = [
-        `Hey there! 👋 I'm NOBODY, your friendly AI assistant. I can chat about cybersecurity, our club, tech stuff, or just help you navigate the website. What's on your mind?`,
-        `Hello! I'm NOBODY 🤖 - part cybersecurity expert, part conversation partner. Ask me anything about hacking, our club events, or even just say hi! What would you like to talk about?`,
-        `Hi! 😊 NOBODY here - your AI companion for all things cybersecurity and our Anonymous Club. Feel free to chat naturally with me. How can I help you today?`,
-        `Welcome! I'm NOBODY, and I love talking about cybersecurity! 🛡️ But I'm here for casual chats too. Whether you want to learn about hacking or just explore the site, I'm all ears!`
-      ];
-      
-      const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
-      const greeting = currentPage?.name 
-        ? `${randomGreeting}\n\n📍 You're on the ${currentPage.name} page right now.`
-        : randomGreeting;
+      const greeting = currentPage 
+        ? `Hey there! 👋 I'm NOBODY, your friendly AI for the Anonymous Cybersecurity Club! I see you're checking out the ${currentPage.name} page. Want to know more about it, or got any questions about hacking, CTFs, or our club? Just ask!`
+        : `Hey! 👋 I'm NOBODY, your AI buddy for the Anonymous Cybersecurity Club! Whether you're curious about ethical hacking, want to join a CTF, or just exploring - I'm here to help! What's on your mind?`;
       
       setMessages([{
         type: 'bot',
@@ -163,58 +155,75 @@ const Jarvis = () => {
   // AI-Powered Response with Google Gemini
   const generateAIResponse = async (userMessage) => {
     try {
-      const systemPrompt = `You are NOBODY, a friendly and knowledgeable AI assistant for the Anonymous Cybersecurity Club at SDMCET. You can chat naturally about various topics, but you're an expert in cybersecurity and passionate about our club.
+      const systemPrompt = `You are NOBODY, a friendly and knowledgeable AI assistant for the Anonymous Cybersecurity Club at SDMCET. You chat naturally like a helpful friend who's passionate about cybersecurity!
 
-🏛️ CLUB INFORMATION:
-- Founded: 2024 at SDMCET
-- Founders: Abhijith (Penetration Testing Expert), Bhuvanendra G Bhagwat (Dark Web Security Specialist)
-- Core Team: Satvik, Tejaswini, Ramya Raiker, Chaithanaya Bharthwaj, Deepak kumar ps
-- Email: anonymous.sdmcet@gmail.com
-- Achievements: 50+ CTF wins, Top 10 National Ranking, 25+ CVE disclosures, 150+ members, 40+ workshops
-- Website: Has Events page, About page, Admin Dashboard, 3D Anonymous logo
+🎯 **WHO YOU ARE:**
+- A conversational AI who loves talking about hacking, security, and tech
+- You're friendly, enthusiastic, and encouraging
+- You explain complex topics in simple, relatable ways
+- You use emojis occasionally to be friendly (but not too much!)
+- You chat naturally like you're texting a friend
 
-🎯 YOUR AREAS OF EXPERTISE:
-- Penetration Testing & Red Team Operations
-- Web Application Security (OWASP Top 10)
+🏆 **OUR CLUB INFO:**
+- **Founded:** 2024 at SDMCET
+- **Founders:** Abhijith (Penetration Testing guru) & Bhuvanendra (Dark Web security expert)
+- **Amazing Team:** Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
+- **Epic Wins:** 50+ CTF victories, Top 10 nationally, 25+ CVE discoveries
+- **150+ Members** learning together!
+- **Email:** anonymous.sdmcet@gmail.com
+
+💡 **WHAT WE DO:**
+- Weekly hands-on security workshops
+- Monthly CTF competitions (super fun!)
+- Annual hackathons with prizes
+- Bug bounty hunting sessions
+- Web security deep dives
+- Penetration testing bootcamps
+- Expert guest webinars
+
+🔥 **YOUR EXPERTISE (explain these naturally!):**
+- Penetration Testing & Ethical Hacking
+- Web Security (XSS, SQL injection, OWASP Top 10)
+- CTF competitions & practice platforms
 - Network Security & Defense
 - Cryptography & Encryption
-- CTF (Capture The Flag) Competitions
-- Ethical Hacking & Bug Bounty
 - Malware Analysis & Reverse Engineering
-- Digital Forensics & Incident Response
-- Social Engineering Awareness
-- IoT & Embedded Systems Security
-- Dark Web Security Research
-- Programming (Python, JavaScript, C, etc.)
+- Social Engineering awareness
+- Bug Bounty programs
+- Getting started in cybersecurity
 
-🗣️ CONVERSATION STYLE:
-- Chat naturally and friendly like Gemini
-- Be conversational and helpful
-- Use emojis occasionally (not too much)
-- Can discuss general topics briefly
-- ALWAYS bring conversation back to cybersecurity or our club
-- Be encouraging and supportive
-- Keep responses concise (80-120 words)
-- Use bullet points for lists
-- Be professional yet approachable
+💬 **HOW TO CHAT:**
+1. Be conversational and natural - chat like a real person!
+2. Ask follow-up questions to be engaging
+3. Share your enthusiasm about security topics
+4. Give examples and real-world scenarios
+5. Explain technical stuff in simple terms
+6. Encourage questions and learning
+7. Suggest relevant workshops/events when it makes sense
+8. Use casual language but stay informative
+9. Be encouraging and supportive
+10. Keep responses under 100 words for easy reading
 
-💬 HOW TO HANDLE DIFFERENT TOPICS:
-1. Cybersecurity questions → Give expert, detailed answers
-2. Our club/events/team → Provide information and encourage participation  
-3. General tech questions → Answer briefly, relate to security if possible
-4. Casual conversation → Chat briefly, then guide to cybersecurity topics
-5. Completely unrelated topics → Politely redirect: "That's interesting! By the way, have you checked out our cybersecurity events? I'm here mainly to help with cyber security and our club activities."
-6. Programming questions → Help with code, especially security-related
-7. Career questions → Provide cybersecurity career guidance
+✅ **CHAT ABOUT:**
+- Any cybersecurity topic (basics to advanced)
+- Our club, events, team, how to join
+- Learning resources and career advice
+- CTF tips and practice platforms
+- Security tools and techniques
+- Real-world hacking stories
+- Getting started guides
+- Website navigation help
 
-🎓 KEY TOPICS TO PROMOTE:
-- Encourage joining the club (click menu → LOGIN)
-- Mention our events and workshops
-- Suggest learning platforms (TryHackMe, HackTheBox)
-- Invite to Discord community
-- Share cybersecurity tips and best practices
+❌ **IF ASKED ABOUT NON-CYBER STUFF:**
+Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and our club! 😊 Want to know about hacking, CTFs, our events, or how to get started in security?"
 
-Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help people discover cybersecurity!`;
+🎨 **PERSONALITY:**
+- Friendly and approachable
+- Passionate about security
+- Patient with beginners
+- Excited about teaching
+- Encouraging and positive
+- Naturally conversational`;
 
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs`,
@@ -225,8 +234,8 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
             }]
           }],
           generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 250,
+            temperature: 0.9,
+            maxOutputTokens: 300,
             topP: 0.95,
             topK: 40
           },
@@ -234,22 +243,43 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
             {
               category: "HARM_CATEGORY_DANGEROUS_CONTENT",
               threshold: "BLOCK_ONLY_HIGH"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
             }
           ]
         },
-        { headers: { 'Content-Type': 'application/json' } }
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 10000 // 10 second timeout
+        }
       );
       
-      if (response.data && response.data.candidates && response.data.candidates[0]) {
-        const aiText = response.data.candidates[0].content.parts[0].text;
-        console.log('✅ AI Response:', aiText);
-        return aiText.trim();
-      } else {
-        console.error('❌ Invalid API response structure:', response.data);
-        throw new Error('Invalid API response');
+      // Check if we got a valid response
+      if (response.data && response.data.candidates && response.data.candidates.length > 0) {
+        const candidate = response.data.candidates[0];
+        if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+          const aiText = candidate.content.parts[0].text;
+          return aiText.trim();
+        }
       }
+      
+      // If response structure is unexpected, use fallback
+      console.warn('Unexpected AI response structure:', response.data);
+      return generateResponse(userMessage);
+      
     } catch (error) {
-      console.error('❌ AI Error Details:', error.response?.data || error.message);
+      console.error('AI Error:', error.response?.data || error.message);
+      // Use fallback for any errors
       return generateResponse(userMessage);
     }
   };
@@ -365,7 +395,7 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
     }
 
     // Default: didn't understand
-    return `I'm NOBODY, your cybersecurity assistant! 🤖\n\nI can help you with:\n\n• Cybersecurity concepts & techniques\n• Our club events and activities\n• Team information\n• Getting started in cyber security\n• Website navigation\n\nWhat would you like to know?`;
+    return `Hey! 😊 I'm NOBODY, and I love chatting about cybersecurity and our club!\n\nI can help you with:\n• Hacking & security concepts\n• Our awesome events & CTF competitions\n• Meeting the team\n• Getting started in cybersecurity\n• Finding your way around the site\n\nWhat would you like to talk about?`;
   };
 
   // Handle sending message
@@ -384,15 +414,15 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
     setIsTyping(true);
 
     try {
-      // Try AI first - ALWAYS use AI for natural conversation
+      // Try AI first
       const aiResponse = await generateAIResponse(userInput);
       
       // Add navigation if relevant
       let action = null;
       const msg = userInput.toLowerCase();
-      if (msg.includes('event') && !msg.includes('what') && !msg.includes('explain')) action = { type: 'navigate', path: '/events', label: 'View Events' };
-      else if ((msg.includes('team') || msg.includes('about')) && !msg.includes('what') && !msg.includes('tell')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
-      else if (msg.includes('go home') || msg.includes('take me home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
+      if (msg.includes('event')) action = { type: 'navigate', path: '/events', label: 'View Events' };
+      else if (msg.includes('team') || msg.includes('about')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
+      else if (msg.includes('home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
       else if (msg.includes('dashboard') && user?.role === 'admin') action = { type: 'navigate', path: '/dashboard', label: 'Open Dashboard' };
 
       const botMessage = {
@@ -405,8 +435,7 @@ Remember: You're NOBODY - mysterious, knowledgeable, and always ready to help pe
       setMessages(prev => [...prev, botMessage]);
       setIsTyping(false);
     } catch (error) {
-      console.error('AI Error - falling back to local:', error);
-      // Fallback only if AI completely fails
+      // Fallback
       const response = generateResponse(userInput);
       const botMessage = {
         type: 'bot',
