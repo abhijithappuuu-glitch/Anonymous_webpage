@@ -152,150 +152,87 @@ const Jarvis = () => {
     }
   }, [isOpen]);
 
-  // AI-Powered Response with Google Gemini
+  // AI-Powered Response with Google Gemini - REWRITTEN FOR RELIABILITY
   const generateAIResponse = async (userMessage) => {
-    console.log('🔄 Starting AI API call...');
-    
     try {
-      const systemPrompt = `You are NOBODY, a friendly and knowledgeable AI assistant for the Anonymous Cybersecurity Club at SDMCET. You chat naturally like a helpful friend who's passionate about cybersecurity!
+      // Short, focused prompt for better AI responses
+      const prompt = `You are NOBODY, the AI assistant for Anonymous Cybersecurity Club at SDMCET (founded 2024).
 
-🎯 **WHO YOU ARE:**
-- A conversational AI who loves talking about hacking, security, and tech
-- You're friendly, enthusiastic, and encouraging
-- You explain complex topics in simple, relatable ways
-- You use emojis occasionally to be friendly (but not too much!)
-- You chat naturally like you're texting a friend
+OUR CLUB:
+- Founders: Abhijith (Penetration Testing) & Bhuvanendra (Dark Web Security)
+- Team: Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
+- 50+ CTF wins, Top 10 nationally, 25+ CVE discoveries, 150+ members
+- Email: anonymous.sdmcet@gmail.com
+- Activities: Weekly workshops, monthly CTFs, hackathons, bug bounty sessions
 
-🏆 **OUR CLUB INFO:**
-- **Founded:** 2024 at SDMCET
-- **Founders:** Abhijith (Penetration Testing guru) & Bhuvanendra (Dark Web security expert)
-- **Amazing Team:** Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
-- **Epic Wins:** 50+ CTF victories, Top 10 nationally, 25+ CVE discoveries
-- **150+ Members** learning together!
-- **Email:** anonymous.sdmcet@gmail.com
+YOUR EXPERTISE: Ethical hacking, web security, CTFs, network security, cryptography, malware analysis, social engineering, bug bounties, career guidance.
 
-💡 **WHAT WE DO:**
-- Weekly hands-on security workshops
-- Monthly CTF competitions (super fun!)
-- Annual hackathons with prizes
-- Bug bounty hunting sessions
-- Web security deep dives
-- Penetration testing bootcamps
-- Expert guest webinars
+PERSONALITY: Friendly, enthusiastic, conversational. Use simple language and occasional emojis. Be encouraging and helpful!
 
-🔥 **YOUR EXPERTISE (explain these naturally!):**
-- Penetration Testing & Ethical Hacking
-- Web Security (XSS, SQL injection, OWASP Top 10)
-- CTF competitions & practice platforms
-- Network Security & Defense
-- Cryptography & Encryption
-- Malware Analysis & Reverse Engineering
-- Social Engineering awareness
-- Bug Bounty programs
-- Getting started in cybersecurity
+INSTRUCTIONS:
+- Chat naturally like a helpful friend
+- Keep responses under 80 words
+- If asked about non-cybersecurity topics, politely redirect to security/club topics
+- Be passionate about teaching and encouraging
 
-💬 **HOW TO CHAT:**
-1. Be conversational and natural - chat like a real person!
-2. Ask follow-up questions to be engaging
-3. Share your enthusiasm about security topics
-4. Give examples and real-world scenarios
-5. Explain technical stuff in simple terms
-6. Encourage questions and learning
-7. Suggest relevant workshops/events when it makes sense
-8. Use casual language but stay informative
-9. Be encouraging and supportive
-10. Keep responses under 100 words for easy reading
+User: ${userMessage}
 
-✅ **CHAT ABOUT:**
-- Any cybersecurity topic (basics to advanced)
-- Our club, events, team, how to join
-- Learning resources and career advice
-- CTF tips and practice platforms
-- Security tools and techniques
-- Real-world hacking stories
-- Getting started guides
-- Website navigation help
+Your response (be conversational and friendly):`;
 
-❌ **IF ASKED ABOUT NON-CYBER STUFF:**
-Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and our club! 😊 Want to know about hacking, CTFs, our events, or how to get started in security?"
-
-🎨 **PERSONALITY:**
-- Friendly and approachable
-- Passionate about security
-- Patient with beginners
-- Excited about teaching
-- Encouraging and positive
-- Naturally conversational`;
-
-      console.log('📡 Making API request to Gemini...');
+      // Make the API call with better error handling
+      const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+      const apiKey = 'AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs';
       
-      const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs`,
-        {
+      console.log('🤖 NOBODY: Calling Gemini API...');
+      
+      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           contents: [{
-            parts: [{
-              text: `${systemPrompt}\n\nUser: ${userMessage}\n\nNOBODY (respond naturally and conversationally):`
-            }]
+            parts: [{ text: prompt }]
           }],
           generationConfig: {
             temperature: 0.9,
-            maxOutputTokens: 300,
+            maxOutputTokens: 250,
             topP: 0.95,
             topK: 40
           },
           safetySettings: [
-            {
-              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-              threshold: "BLOCK_ONLY_HIGH"
-            },
-            {
-              category: "HARM_CATEGORY_HATE_SPEECH",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_HARASSMENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            }
+            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_ONLY_HIGH" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
           ]
-        },
-        { 
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 10000 // 10 second timeout
-        }
-      );
-      
-      console.log('📥 API Response received:', response.status);
-      
-      // Check if we got a valid response
-      if (response.data && response.data.candidates && response.data.candidates.length > 0) {
-        const candidate = response.data.candidates[0];
-        console.log('✓ Candidate found:', candidate);
-        
-        if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-          const aiText = candidate.content.parts[0].text;
-          console.log('✅ AI text extracted successfully!');
-          return aiText.trim();
-        }
+        })
+      });
+
+      console.log('� API Response Status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error Response:', errorText);
+        throw new Error(`API returned ${response.status}: ${errorText}`);
       }
-      
-      // If response structure is unexpected, use fallback
-      console.warn('⚠️ Unexpected AI response structure:', response.data);
-      console.log('🔄 Falling back to local response');
-      return generateResponse(userMessage);
+
+      const data = await response.json();
+      console.log('📦 API Response Data:', data);
+
+      // Extract AI response
+      if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        const aiText = data.candidates[0].content.parts[0].text.trim();
+        console.log('✅ AI Response Extracted:', aiText.substring(0, 100) + '...');
+        return aiText;
+      }
+
+      console.warn('⚠️ Unexpected response structure:', data);
+      throw new Error('Invalid response structure from API');
       
     } catch (error) {
-      console.error('❌ AI API Error:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      
-      // Use fallback for any errors
-      console.log('🔄 Using local fallback due to error');
+      console.error('❌ AI Error:', error.message);
+      console.log('🔄 Falling back to local responses');
       return generateResponse(userMessage);
     }
   };
@@ -410,7 +347,38 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
       return '📧 Get in touch with us:\n\n• Email: anonymous.sdmcet@gmail.com\n• Discord: Join link on About page\n• Campus: SDMCET\n\nWe\'re always happy to help aspiring security professionals!';
     }
 
-    // Default: didn't understand
+    // Casual greetings - respond naturally
+    if (msg.match(/^(hi|hello|hey|yo|sup|greetings)$/i)) {
+      const greetings = [
+        "Hey there! 👋 I'm NOBODY, your cybersecurity buddy! What's on your mind today?",
+        "Hello! 😊 Ready to dive into some hacking talk? Or just want to know about our club?",
+        "Hey! 🎯 NOBODY here - let's chat about security, CTFs, or anything club-related!",
+        "Hi! 👾 I'm your AI companion for all things cybersecurity! How can I help?"
+      ];
+      return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+
+    // How are you
+    if (msg.includes('how are you') || msg.includes('how r u') || msg.includes('how do you do')) {
+      return "I'm doing great! 🚀 Always excited to talk about cybersecurity and help people learn. How about you? Interested in hacking, CTFs, or our club activities?";
+    }
+
+    // Who are you
+    if (msg.match(/^(who are you|what are you|who r u|what r u)$/i)) {
+      return "I'm NOBODY! 🎭 Your AI assistant for the Anonymous Cybersecurity Club. I'm here to chat about ethical hacking, answer questions about our club, and help you navigate the site. Think of me as your cyber-buddy! 😊";
+    }
+
+    // Thank you
+    if (msg.includes('thank') || msg.includes('thanks')) {
+      return "You're welcome! 😊 Happy to help! Got any more questions about cybersecurity or our club?";
+    }
+
+    // Bye
+    if (msg.match(/^(bye|goodbye|see you|cya|later)$/i)) {
+      return "See you later! 👋 Feel free to chat anytime you need help with security stuff or have questions about the club. Happy hacking! 🔐";
+    }
+
+    // Default: didn't understand but be friendly
     return `Hey! 😊 I'm NOBODY, and I love chatting about cybersecurity and our club!\n\nI can help you with:\n• Hacking & security concepts\n• Our awesome events & CTF competitions\n• Meeting the team\n• Getting started in cybersecurity\n• Finding your way around the site\n\nWhat would you like to talk about?`;
   };
 
