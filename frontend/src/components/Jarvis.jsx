@@ -154,6 +154,8 @@ const Jarvis = () => {
 
   // AI-Powered Response with Google Gemini
   const generateAIResponse = async (userMessage) => {
+    console.log('🔄 Starting AI API call...');
+    
     try {
       const systemPrompt = `You are NOBODY, a friendly and knowledgeable AI assistant for the Anonymous Cybersecurity Club at SDMCET. You chat naturally like a helpful friend who's passionate about cybersecurity!
 
@@ -225,6 +227,8 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
 - Encouraging and positive
 - Naturally conversational`;
 
+      console.log('📡 Making API request to Gemini...');
+      
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs`,
         {
@@ -264,22 +268,34 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
         }
       );
       
+      console.log('📥 API Response received:', response.status);
+      
       // Check if we got a valid response
       if (response.data && response.data.candidates && response.data.candidates.length > 0) {
         const candidate = response.data.candidates[0];
+        console.log('✓ Candidate found:', candidate);
+        
         if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
           const aiText = candidate.content.parts[0].text;
+          console.log('✅ AI text extracted successfully!');
           return aiText.trim();
         }
       }
       
       // If response structure is unexpected, use fallback
-      console.warn('Unexpected AI response structure:', response.data);
+      console.warn('⚠️ Unexpected AI response structure:', response.data);
+      console.log('🔄 Falling back to local response');
       return generateResponse(userMessage);
       
     } catch (error) {
-      console.error('AI Error:', error.response?.data || error.message);
+      console.error('❌ AI API Error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
       // Use fallback for any errors
+      console.log('🔄 Using local fallback due to error');
       return generateResponse(userMessage);
     }
   };
@@ -413,17 +429,30 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
     setInputValue('');
     setIsTyping(true);
 
+    // Try AI first
+    console.log('🤖 NOBODY: Sending to AI:', userInput);
+    
     try {
-      // Try AI first
       const aiResponse = await generateAIResponse(userInput);
+      console.log('✅ AI Response received:', aiResponse);
+      
+      // Check if we actually got an AI response or fallback
+      if (!aiResponse || aiResponse.includes("I'm NOBODY, your cybersecurity assistant")) {
+        console.warn('⚠️ Using fallback response');
+      }
       
       // Add navigation if relevant
       let action = null;
       const msg = userInput.toLowerCase();
-      if (msg.includes('event')) action = { type: 'navigate', path: '/events', label: 'View Events' };
-      else if (msg.includes('team') || msg.includes('about')) action = { type: 'navigate', path: '/about', label: 'Meet Team' };
-      else if (msg.includes('home')) action = { type: 'navigate', path: '/', label: 'Go Home' };
-      else if (msg.includes('dashboard') && user?.role === 'admin') action = { type: 'navigate', path: '/dashboard', label: 'Open Dashboard' };
+      if (msg.includes('event') && !msg.includes('what') && !msg.includes('tell')) {
+        action = { type: 'navigate', path: '/events', label: 'View Events' };
+      } else if ((msg.includes('team') || msg.includes('about')) && !msg.includes('what') && !msg.includes('tell')) {
+        action = { type: 'navigate', path: '/about', label: 'Meet Team' };
+      } else if (msg.includes('home') && (msg.includes('go') || msg.includes('take me'))) {
+        action = { type: 'navigate', path: '/', label: 'Go Home' };
+      } else if (msg.includes('dashboard') && user?.role === 'admin') {
+        action = { type: 'navigate', path: '/dashboard', label: 'Open Dashboard' };
+      }
 
       const botMessage = {
         type: 'bot',
@@ -433,8 +462,9 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
       };
 
       setMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
     } catch (error) {
+      console.error('❌ AI Error in handleSend:', error);
+      
       // Fallback
       const response = generateResponse(userInput);
       const botMessage = {
@@ -445,6 +475,7 @@ Politely redirect: "That's interesting, but I'm your go-to for cybersecurity and
       };
 
       setMessages(prev => [...prev, botMessage]);
+    } finally {
       setIsTyping(false);
     }
   };
