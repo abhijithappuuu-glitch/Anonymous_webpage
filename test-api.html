@@ -98,7 +98,7 @@ User: ${userInput}
 Your response (be conversational and friendly):`;
 
             try {
-                const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+                const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
                 const apiKey = 'AIzaSyAJlpXG0gJEX2xXqfUny43wkcok-Iwsavs';
                 
                 const response = await fetch(`${apiUrl}?key=${apiKey}`, {
