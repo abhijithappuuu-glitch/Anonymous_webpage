@@ -20,10 +20,10 @@ Your ChatGPT integration is now secure, but you need to configure the API key in
    - Click "Add New" button
    - Fill in the fields:
      - **Key**: `VITE_OPENAI_API_KEY`
-     - **Value**: `[YOUR_OPENAI_API_KEY_HERE]`
+     - **Value**: `[YOUR_NEW_OPENAI_API_KEY]` - Generate at https://platform.openai.com/api-keys
      - **Environment**: Select all three (Production, Preview, Development)
 
-   **📝 Note**: Use the OpenAI API key I provided earlier (starts with `sk-proj-...`)
+   **📝 Note**: Use a NEW API key - the old key was revoked for security. See `SECURITY_CHECKLIST.md` for setup instructions.
 
 5. **Save the Variable**
    - Click "Save"

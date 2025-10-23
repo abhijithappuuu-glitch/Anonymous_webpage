@@ -4,6 +4,7 @@ A modern, secure, and visually striking website for the Anonymous Cybersecurity 
 
 ## 🔥 Features
 
+- **🤖 NOBODY AI Assistant**: AI-powered chat using OpenAI ChatGPT for intelligent, conversational support
 - **Animated Landing Page**: Kali Linux boot screen-inspired logo animation
 - **Secure Authentication**: JWT-based auth with bcrypt password hashing (optional login mode supported)
 - **Event Timeline**: Interactive timeline showcasing club events (past events include inline image previews)
@@ -67,6 +68,14 @@ NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 ```
 
+Create `frontend/.env` (for local development):
+
+```env
+VITE_OPENAI_API_KEY=sk-proj-your-api-key-here
+```
+
+> 🔒 **Security**: Never commit `.env` files to Git. See `SECURITY_CHECKLIST.md` for production setup.
+
 ## 🚀 Usage
 
 1. Start MongoDB
@@ -111,8 +120,25 @@ FRONTEND_URL=http://localhost:5173
 - `PUT /api/events/:id` - Update event (admin only)
 - `DELETE /api/events/:id` - Delete event (admin only)
 
+## 🤖 NOBODY AI Assistant
+
+The site features an integrated AI chat assistant powered by OpenAI ChatGPT.
+
+**Setup**:
+1. See `QUICK_START.md` for 5-minute setup guide
+2. See `SECURITY_CHECKLIST.md` for complete security instructions
+3. See `NOBODY_AI_TECHNICAL_DOCS.md` for technical details
+
+**Features**:
+- Intelligent conversational responses
+- Navigation assistance
+- Cybersecurity topic support
+- Graceful fallback to local intelligence
+
 ## 🎯 Future Enhancements
 
+- [ ] NOBODY AI: Streaming responses
+- [ ] NOBODY AI: Conversation memory
 - [ ] Admin panel for content management
 - [ ] Two-factor authentication (2FA)
 - [ ] Dark/Light mode toggle
