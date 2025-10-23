@@ -152,42 +152,57 @@ const Jarvis = () => {
     }
   }, [isOpen]);
 
-  // AI-Powered Response with ChatGPT (OpenAI)
+  // AI-Powered Response with ChatGPT (OpenAI) - ENHANCED VERSION
   const generateAIResponse = async (userMessage) => {
     try {
-      // Short, focused prompt for better AI responses
-      const prompt = `You are NOBODY, the AI assistant for Anonymous Cybersecurity Club at SDMCET (founded 2024).
-
-OUR CLUB:
-- Founders: Abhijith (Penetration Testing) & Bhuvanendra (Dark Web Security)
-- Team: Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
-- 50+ CTF wins, Top 10 nationally, 25+ CVE discoveries, 150+ members
-- Email: anonymous.sdmcet@gmail.com
-- Activities: Weekly workshops, monthly CTFs, hackathons, bug bounty sessions
-
-YOUR EXPERTISE: Ethical hacking, web security, CTFs, network security, cryptography, malware analysis, social engineering, bug bounties, career guidance.
-
-PERSONALITY: Friendly, enthusiastic, conversational. Use simple language and occasional emojis. Be encouraging and helpful!
-
-INSTRUCTIONS:
-- Chat naturally like a helpful friend
-- Keep responses under 80 words
-- If asked about non-cybersecurity topics, politely redirect to security/club topics
-- Be passionate about teaching and encouraging
-
-User: ${userMessage}
-
-Your response (be conversational and friendly):`;
-
-      // Make the API call with ChatGPT (OpenAI)
+      // Get API key
       const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
       
+      console.log('🎯 Generating AI response for:', userMessage);
+      console.log('🔑 API Key status:', apiKey ? `✅ Configured (${apiKey.substring(0, 15)}...)` : '❌ NOT FOUND - Using fallback');
+      
       if (!apiKey) {
-        console.error('❌ OpenAI API key not configured');
+        console.warn('⚠️ No OpenAI API key - using local knowledge base only');
         return generateResponse(userMessage);
       }
-      
-      console.log('🤖 NOBODY: Calling ChatGPT API...');
+
+      // Enhanced system prompt - ONLY cybersecurity and club topics
+      const prompt = `You are NOBODY, the AI assistant for Anonymous Cybersecurity Club at SDMCET (founded 2025).
+
+CLUB INFORMATION:
+- Founders: Abhijith (Technical Lead - Penetration Testing) & Bhuvanendra (VP - Dark Web Security)
+- Core Team: Satvik, Tejaswini, Ramya, Chaithanaya, Deepak
+- Achievements: 50+ CTF wins, Top 10 nationally, 25+ CVE discoveries, 150+ members
+- Contact: anonymous.sdmcet@gmail.com
+- Activities: Weekly workshops, monthly CTF competitions, annual hackathons, bug bounty programs
+
+YOUR EXPERTISE (ONLY THESE TOPICS):
+✅ Cybersecurity: ethical hacking, penetration testing, web security, network security, cryptography, malware analysis, CTF challenges, bug bounties
+✅ Club: events, team, activities, how to join, workshops, competitions
+✅ Career guidance: cybersecurity career paths, certifications (CEH, OSCP, etc.), learning resources
+
+STRICT RULES:
+1. ✅ ANSWER: Cybersecurity topics, club info, career guidance in security
+2. ❌ REDIRECT: Any non-cybersecurity topics (personal questions, general chat, inappropriate content)
+   - Response: "I'm focused on cybersecurity! 🔒 Ask me about hacking, CTFs, pentesting, or our club instead."
+3. ❌ REDIRECT: Rude/inappropriate messages
+   - Response: "Let's keep it professional! 💼 How can I help with cybersecurity?"
+
+PERSONALITY:
+- Friendly, enthusiastic, encouraging
+- Keep responses conversational (under 80 words)
+- Use emojis sparingly (1-2 per response)
+- Be passionate about teaching security
+
+CURRENT CONTEXT:
+- User page: ${location.pathname === '/' ? 'Home' : location.pathname}
+- User status: ${user ? `Logged in as ${user.username} (${user.role})` : 'Guest'}
+
+USER MESSAGE: "${userMessage}"
+
+YOUR RESPONSE (stay on cybersecurity/club topics only):`;
+
+      console.log('📤 Sending request to OpenAI ChatGPT...');
       
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -201,36 +216,48 @@ Your response (be conversational and friendly):`;
             { role: 'system', content: prompt },
             { role: 'user', content: userMessage }
           ],
-          temperature: 0.9,
-          max_tokens: 200
+          temperature: 0.8,
+          max_tokens: 250,
+          presence_penalty: 0.6,
+          frequency_penalty: 0.3
         })
       });
 
       console.log('📡 API Response Status:', response.status);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ API Error:', errorData);
-        throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ API Error Response:', errorData);
+        throw new Error(`OpenAI API Error ${response.status}: ${errorData.error?.message || 'Request failed'}`);
       }
 
       const data = await response.json();
-      console.log('📦 API Response Data:', data);
 
       // Extract ChatGPT response
       if (data?.choices?.[0]?.message?.content) {
         const aiText = data.choices[0].message.content.trim();
-        console.log('✅ AI Response:', aiText);
+        console.log('✅ OpenAI responded successfully!');
+        console.log('🤖 AI response preview:', aiText.substring(0, 60) + '...');
         return aiText;
       }
 
-      console.warn('⚠️ Unexpected response structure:', data);
-      throw new Error('Invalid response structure from API');
+      console.warn('⚠️ Unexpected API response structure');
+      throw new Error('Invalid response format from OpenAI');
       
     } catch (error) {
-      console.error('❌ AI Error:', error.message);
-      console.log('🔄 Falling back to local responses');
-      return generateResponse(userMessage);
+      console.error('❌ AI request failed:', error.message);
+      console.log('🔄 Falling back to local knowledge base');
+      
+      // Use local fallback
+      const fallbackResponse = generateResponse(userMessage);
+      
+      // Add offline notice if API key is configured but request failed
+      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+      if (apiKey && error.message.includes('API')) {
+        return fallbackResponse + '\n\n_⚠️ AI is temporarily offline. Using local responses._';
+      }
+      
+      return fallbackResponse;
     }
   };
 
@@ -238,6 +265,12 @@ Your response (be conversational and friendly):`;
   const generateResponse = (userMessage) => {
     const msg = userMessage.toLowerCase().trim();
     const currentPage = websiteKnowledge.pages[location.pathname];
+
+    // Handle inappropriate content
+    const inappropriateWords = ['fuck', 'shit', 'damn', 'ass', 'bitch', 'stupid', 'idiot', 'mad', 'crazy'];
+    if (inappropriateWords.some(word => msg.includes(word))) {
+      return "Let's keep it professional! 💼 I'm here to help with cybersecurity topics, club info, and technical questions. How can I assist you today?";
+    }
 
     // Navigation requests
     if (msg.includes('take me') || msg.includes('go to') || msg.includes('navigate') || msg.includes('show me')) {
