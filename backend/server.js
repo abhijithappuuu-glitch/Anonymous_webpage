@@ -8,6 +8,8 @@ import authRoutes from './routes/auth.js';
 import eventRoutes from './routes/events.js';
 import adminRoutes from './routes/admin.js';
 import publicRoutes from './routes/public.js';
+import newsRoutes from './routes/news.js';
+import scheduler from './scheduler.js';
 
 dotenv.config();
 
@@ -60,6 +62,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/news', newsRoutes);
 app.use('/api', publicRoutes);
 
 // MongoDB connection with options
@@ -70,7 +73,16 @@ const mongoOptions = {
 };
 
 mongoose.connect(process.env.MONGODB_URI, mongoOptions)
-  .then(() => console.log('✅ MongoDB connected successfully'))
+  .then(() => {
+    console.log('✅ MongoDB connected successfully');
+    
+    // Start news scheduler after successful DB connection
+    if (process.env.ENABLE_NEWS_SCHEDULER === 'true') {
+      scheduler.startAll();
+    } else {
+      console.log('ℹ️ News scheduler disabled. Set ENABLE_NEWS_SCHEDULER=true to enable.');
+    }
+  })
   .catch(err => {
     console.error('❌ MongoDB connection error:', err.message);
     console.error('Connection string:', process.env.MONGODB_URI?.replace(/:[^:]*@/, ':****@')); // Hide password

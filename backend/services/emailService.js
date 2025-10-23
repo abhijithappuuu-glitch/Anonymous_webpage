@@ -165,6 +165,214 @@ Anonymous Cybersecurity Club Security Team
       // Don't throw error, allow authentication to continue
       return { success: true, mode: 'console_fallback', error: error.message };
     }
+  },
+
+  /**
+   * Send weekly cybersecurity news digest to user
+   */
+  sendWeeklyDigest: async (email, globalNews, indianNews, weekNumber, year) => {
+    try {
+      const transporter = emailService.createTransporter();
+      
+      if (!transporter) {
+        console.log('\n=== NEWS DIGEST (CONSOLE MODE) ===');
+        console.log(`To: ${email}`);
+        console.log(`Week ${weekNumber}, ${year}`);
+        console.log(`Global News: ${globalNews.length} articles`);
+        console.log(`Indian News: ${indianNews.length} articles`);
+        return { success: true, mode: 'console' };
+      }
+
+      const htmlContent = emailService.generateDigestTemplate(globalNews, indianNews, weekNumber, year);
+      
+      const mailOptions = {
+        from: `"Anonymous Cybersecurity Club" <${process.env.EMAIL_USER || 'anonymous.sdmcet@gmail.com'}>`,
+        to: email,
+        subject: `🔒 Weekly Cybersecurity Digest - Week ${weekNumber}, ${year}`,
+        html: htmlContent
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`✅ Digest sent to: ${email}`);
+      
+      return { success: true, messageId: info.messageId, email };
+    } catch (error) {
+      console.error(`❌ Failed to send digest to ${email}:`, error.message);
+      return { success: false, email, error: error.message };
+    }
+  },
+
+  /**
+   * Generate HTML email template for news digest
+   */
+  generateDigestTemplate: (globalNews, indianNews, weekNumber, year) => {
+    const clubName = 'Anonymous Cybersecurity Club';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Weekly Cybersecurity Digest</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0a0a0a; padding: 20px; }
+        .container { max-width: 650px; margin: 0 auto; background: #1a1a1a; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,255,65,0.1); border: 1px solid #00ff41; }
+        .header { background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%); color: #000; padding: 40px 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; font-weight: bold; }
+        .header p { font-size: 16px; opacity: 0.8; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 40px; }
+        .section-title { font-size: 22px; color: #00ff41; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #00ff41; text-shadow: 0 0 10px rgba(0,255,65,0.5); }
+        .news-card { background: #0a0a0a; border-left: 4px solid #00ff41; padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: all 0.3s; border: 1px solid #1a1a1a; }
+        .news-card:hover { transform: translateX(5px); border-color: #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+        .news-title { font-size: 18px; font-weight: bold; color: #00ff41; margin-bottom: 10px; }
+        .news-summary { font-size: 14px; color: #ccc; line-height: 1.6; margin-bottom: 15px; }
+        .news-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .news-source { font-size: 13px; color: #888; font-style: italic; }
+        .news-link { display: inline-block; background: #00ff41; color: #000; padding: 8px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: 600; }
+        .news-link:hover { background: #00cc33; }
+        .footer { background: #0a0a0a; padding: 20px 30px; text-align: center; font-size: 13px; color: #666; border-top: 1px solid #00ff41; }
+        .footer a { color: #00ff41; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .emoji { font-size: 24px; margin-bottom: 10px; }
+        .no-news { color: #888; font-style: italic; text-align: center; padding: 20px; }
+        @media (max-width: 600px) {
+          .header { padding: 30px 20px; }
+          .content { padding: 20px; }
+          .news-card { padding: 15px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <!-- Header -->
+        <div class="header">
+          <div class="emoji">🔒</div>
+          <h1>${clubName}</h1>
+          <p>Weekly Cybersecurity News Digest - Week ${weekNumber}, ${year}</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+          <!-- Global News Section -->
+          <div class="section">
+            <h2 class="section-title">🌍 Global Cybersecurity News</h2>
+            ${emailService.generateNewsCards(globalNews)}
+          </div>
+
+          <!-- Indian News Section -->
+          <div class="section">
+            <h2 class="section-title">🇮🇳 Indian Cybersecurity News</h2>
+            ${emailService.generateNewsCards(indianNews)}
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <p style="color: #00ff41; font-weight: bold;">You're receiving this because you're a member of ${clubName}</p>
+          <p style="margin-top: 10px;">
+            <a href="${frontendUrl}">Visit Our Website</a> • 
+            <a href="${frontendUrl}/news">View All News</a>
+          </p>
+          <p style="margin-top: 15px; color: #555; font-size: 12px;">
+            Stay vigilant, stay secure! 🛡️
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+    `;
+  },
+
+  /**
+   * Generate HTML for news cards
+   */
+  generateNewsCards: (newsArray) => {
+    if (!newsArray || newsArray.length === 0) {
+      return '<p class="no-news">No news available this week.</p>';
+    }
+
+    return newsArray.map(news => `
+      <div class="news-card">
+        <div class="news-title">${news.title}</div>
+        <div class="news-summary">${news.summary}</div>
+        <div class="news-meta">
+          <span class="news-source">📰 ${news.source}</span>
+          <a href="${news.url}" class="news-link" target="_blank">Read More →</a>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  /**
+   * Send digest to all verified users
+   */
+  sendDigestToAll: async (globalNews, indianNews, weekNumber, year) => {
+    try {
+      console.log('📧 Starting weekly digest email campaign...');
+      
+      // Import User model dynamically to avoid circular dependency
+      const User = (await import('../models/User.js')).default;
+      
+      // Get all verified users
+      const users = await User.find({ 
+        $or: [
+          { isVerified: true },
+          { emailVerified: true }
+        ]
+      }).select('email name').lean();
+      
+      if (users.length === 0) {
+        console.log('⚠️ No verified users found');
+        return { success: false, message: 'No users to send emails to' };
+      }
+
+      console.log(`📤 Sending digest to ${users.length} users...`);
+
+      // Send emails in batches to avoid rate limits
+      const batchSize = 10;
+      const results = [];
+
+      for (let i = 0; i < users.length; i += batchSize) {
+        const batch = users.slice(i, i + batchSize);
+        
+        console.log(`📤 Batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(users.length / batchSize)}`);
+        
+        const batchResults = await Promise.all(
+          batch.map(user => 
+            emailService.sendWeeklyDigest(user.email, globalNews, indianNews, weekNumber, year)
+          )
+        );
+
+        results.push(...batchResults);
+
+        // Wait 1 second between batches
+        if (i + batchSize < users.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      const successful = results.filter(r => r.success).length;
+      const failed = results.filter(r => !r.success).length;
+
+      const summary = {
+        success: true,
+        totalUsers: users.length,
+        sent: successful,
+        failed: failed,
+        timestamp: new Date()
+      };
+
+      console.log('✅ Email campaign completed:', summary);
+      return summary;
+
+    } catch (error) {
+      console.error('❌ Email campaign failed:', error.message);
+      throw error;
+    }
   }
 };
 

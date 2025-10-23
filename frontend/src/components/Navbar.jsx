@@ -155,6 +155,23 @@ const Navbar = ({ onLoginClick }) => {
                         <span className="flex-1">EVENTS</span>
                         {isActive('/events') && <span className="text-xs opacity-60">current</span>}
                       </Link>
+                      <Link 
+                        to="/news" 
+                        onClick={() => setMenuOpen(false)}
+                        className={`group flex items-center px-4 py-3 rounded-lg text-sm font-mono transition-all duration-200 ${
+                          isActive('/news') 
+                            ? (theme === 'hacker' 
+                                ? 'text-green-300 font-bold bg-gradient-to-r from-green-900/40 to-green-800/40 border border-green-400/30 shadow-[0_0_8px_rgba(0,255,65,0.2)]' 
+                                : 'text-cyan-300 font-bold bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-cyan-400/30 shadow-[0_0_8px_rgba(0,255,255,0.2)]')
+                            : (theme === 'hacker' 
+                                ? 'text-green-400/70 hover:text-green-300 hover:bg-green-900/20 border border-transparent hover:border-green-400/20' 
+                                : 'text-gray-400 hover:text-cyan-300 hover:bg-cyan-900/20 border border-transparent hover:border-cyan-400/20')
+                        }`}
+                      >
+                        <span className={`mr-3 text-xs transition-transform group-hover:scale-110 ${isActive('/news') ? '●' : '○'}`} />
+                        <span className="flex-1">NEWS</span>
+                        {isActive('/news') && <span className="text-xs opacity-60">current</span>}
+                      </Link>
                     </nav>
                   </div>
                   

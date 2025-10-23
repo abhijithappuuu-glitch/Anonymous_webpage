@@ -6,6 +6,7 @@ import Jarvis from './components/Jarvis';
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
 const About = lazy(() => import('./pages/About'));
+const News = lazy(() => import('./pages/News'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProtectedAdmin = lazy(() => import('./components/ProtectedAdmin'));
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
           <Route path="/about" element={<About />} />
+          <Route path="/news" element={<News />} />
           <Route path="/admin" element={<ProtectedAdmin />} />
           <Route path="/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<Navigate to="/" />} />
